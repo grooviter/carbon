@@ -159,7 +159,8 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     }
 
     MethodCallExpression createOptionExpression(StatementUtils.Group group) {
-        String groupName = group.label.name
+        String groupName = group?.label?.name ?: ''
+        String groupDesc = group?.label?.desc ?: ''
 
         List<MapEntryExpression> configEntries =
             [A.EXPR.mapEntryX(A.EXPR.constX('longOpt'),
@@ -169,7 +170,8 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
 
         MethodCallExpression methodCallX =
             A.EXPR.callThisX("${groupName.find()}",
-                             A.EXPR.mapX(configEntries))
+                             A.EXPR.mapX(configEntries),
+                             A.EXPR.constX(groupDesc))
 
         return methodCallX
     }
