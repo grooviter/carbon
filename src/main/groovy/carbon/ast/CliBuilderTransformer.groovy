@@ -126,58 +126,81 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         return A.STMT.stmt(declarationX)
     }
 
-    List<Statement> createCases(List<StatementUtils.Group> groups) {
+    /**
+     * Generates if/else statements from the different groups passed
+     * as parameters
+     *
+     * <code>
+     * if (options.h) {
+     *  // code
+     * }
+     * </code>
+     *
+     * @param groups groups of type {@link StatementUtils.Group}
+     * @return a list of if/else statements
+     * @since 0.1.0
+     */
+    List<Statement> createCases(final List<StatementUtils.Group> groups) {
+        Statement helpUsageStatement = createHelpCaseS()
         List<Statement> allCasesButUsage = groups
             .findAll(this.&notUsage)
-            .findAll(this.&notManual)
-            .collect(this.&createUserCaseStmt)
+            .collect(this.&transformLiteralGroup)
+            .collect(this.&createNormalCaseS)
 
-        Statement manualStatement = createManualCaseStmt(groups)
-        Statement helpUsageStatement = createHelpCaseStmt()
-
-        return [helpUsageStatement, manualStatement] + allCasesButUsage
+        return [helpUsageStatement] + allCasesButUsage
     }
 
-
-    Statement createUserCaseStmt(final StatementUtils.Group group) {
+    Statement createNormalCaseS(final StatementUtils.Group group) {
         String optionLetter = group.label.name.find()
 
         return createIfOptionStmt(optionLetter, group.statements)
     }
 
-    Statement createHelpCaseStmt() {
+    Statement createHelpCaseS() {
         MethodCallExpression callUsageX = A.EXPR.callX(A.EXPR.varX(CLI_BUILDER_NAME), 'usage')
         Statement usageStatement = A.STMT.stmt(callUsageX)
 
         return createIfOptionStmt('h', [usageStatement])
     }
 
-    Statement createManualCaseStmt(List<StatementUtils.Group> groups) {
-        StatementUtils.Group manualGroup = groups.find { StatementUtils.Group g ->
-            !notManual(g)
+    /**
+     * Transform the group passed as parameter if it only has a
+     * constant expression
+     *
+     * @param group the group to be transformed
+     * @return a new group if the group had a constant expression
+     * @since 0.1.4
+     */
+    StatementUtils.Group transformLiteralGroup(final StatementUtils.Group group) {
+        if (group.statements.size() == 1 &&
+            group.statements.every(this.&isExpressionStmtAndHasAConstantExpression)) {
+
+            ExpressionStatement statement = group.statements.find() as ExpressionStatement
+            Expression constantExpression = statement.expression
+            MethodCallExpression printlnX = A.EXPR.callThisX('println', constantExpression)
+            Statement printlnS = A.STMT.stmt(printlnX)
+
+            return group.copyWithStatements([printlnS])
         }
 
-        String name = manualGroup?.label?.name ?: ''
-        String desc = manualGroup?.label?.desc ?: ''
-
-        Expression textX = getManualTextX(manualGroup)
-
-        return createIfOptionStmt('m', [A.STMT.stmt(A.EXPR.callThisX('println', textX))])
+        return group
     }
 
-    Expression getManualTextX(StatementUtils.Group group) {
-        ExpressionStatement textS = (ExpressionStatement) group
-            ?.statements
-            ?.find(this.&isExpressionStmtAndHasAConstantExpression)
-
-        return textS?.expression ?: A.EXPR.constX('NO MANUAL FOUND')
-    }
-
-    Boolean isExpressionStmtAndHasAConstantExpression(Statement stmt) {
+    /**
+     * This method evaluates if the {@link Statement} passed as
+     * parameter has only one expression of type {@link
+     * ConstantExpression}
+     *
+     * @param stmt the statement to evaluate
+     * @return true if the statement has one and only one constant
+     * expression false otherwise
+     * @since 0.1.4
+     */
+    Boolean isExpressionStmtAndHasAConstantExpression(final Statement stmt) {
         return stmt instanceof ExpressionStatement && stmt.expression instanceof ConstantExpression
     }
 
-    Statement createIfOptionStmt(String option, List<Statement> statements) {
+    Statement createIfOptionStmt(final String option, final List<Statement> statements) {
         PropertyExpression propX = A.EXPR.propX(A.EXPR.varX('options'),
                                                 A.EXPR.constX(option))
 
@@ -185,6 +208,20 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
                           A.STMT.blockS(statements))
     }
 
+    /**
+     * Creates the CliBuilder statement with the different usage options
+     *
+     * <code>
+     * cli.with {
+     *    h(...)
+     *    u(...)
+     * }
+     * </code>
+     *
+     * @param groups groups representing the different options
+     * @return a statement with the CliBuilder options call statement
+     * @since 0.1.0
+     */
     Statement cliWithS(final List<StatementUtils.Group> groups) {
         List<MethodCallExpression> optionsX = groups
             .findAll(this.&notUsage)
@@ -206,31 +243,21 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         return group.label.name != DEFAULT_USAGE_LABEL
     }
 
-    /**
-     * Predicate to filter all groups that are not the manual group
-     *
-     * @param group the group to be evaluated
-     * @return true if it's not the manual group false otherwise
-     */
-    Boolean notManual(StatementUtils.Group group) {
-        return group.label.name != DEFAULT_MANUAL_LABEL
-    }
-
-    MethodCallExpression cliWithX(List<MethodCallExpression> optionsXs) {
+    MethodCallExpression cliWithX(final List<MethodCallExpression> optionsXs) {
         List<Statement> statements = optionsXs.collect(A.STMT.&stmt)
         ClosureExpression closureX = A.EXPR.closureX(A.STMT.blockS(statements))
 
         return A.EXPR.callX(A.EXPR.varX(CLI_BUILDER_NAME), 'with', closureX)
     }
 
-    MethodCallExpression createOptionExpression(StatementUtils.Group group) {
+    MethodCallExpression createOptionExpression(final StatementUtils.Group group) {
         String groupName = group?.label?.name ?: ''
         String groupDesc = group?.label?.desc ?: ''
 
         return createOptionExpression(groupName, groupDesc)
     }
 
-    MethodCallExpression createOptionExpression(String name, String desc) {
+    MethodCallExpression createOptionExpression(final String name, final String desc) {
         List<MapEntryExpression> configEntries =
             [A.EXPR.mapEntryX(A.EXPR.constX('longOpt'),
                               A.EXPR.constX(name)),
@@ -245,6 +272,14 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         return methodCallX
     }
 
+    /**
+     * Creates the statment where the CliBuilder parses the script arguments
+     *
+     * <code>options = cli.parse(args)</code>
+     *
+     * @return a {@link Statement} with an expression parsing the script args
+     * @since 0.1.0
+     */
     Statement parseArgsStmt() {
         DeclarationExpression declarationX =
             A.EXPR.varDeclarationX('options',
