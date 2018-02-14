@@ -118,17 +118,35 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     }
 
     List<Statement> createCases(List<StatementUtils.Group> groups) {
-        return groups
+        Statement helpUsageStatement = createHelpCaseStmt()
+        List<Statement> allCasesButUsage = groups
             .findAll(this.&notUsage)
-            .collect(this.&createCaseStmt)
+            .collect(this.&createUserCaseStmt)
+
+
+        return [helpUsageStatement] + allCasesButUsage
     }
 
-    Statement createCaseStmt(final StatementUtils.Group group) {
+
+    Statement createUserCaseStmt(final StatementUtils.Group group) {
+        String optionLetter = group.label.name.find()
+
+        return createIfOptionStmt(optionLetter, group.statements)
+    }
+
+    Statement createHelpCaseStmt() {
+        MethodCallExpression callUsageX = A.EXPR.callX(A.EXPR.varX(CLI_BUILDER_NAME), 'usage')
+        Statement usageStatement = A.STMT.stmt(callUsageX)
+
+        return createIfOptionStmt('h', [usageStatement])
+    }
+
+    Statement createIfOptionStmt(String option, List<Statement> statements) {
         PropertyExpression propX = A.EXPR.propX(A.EXPR.varX('options'),
-                                                A.EXPR.constX(group.label.name.find()))
+                                                A.EXPR.constX(option))
 
         return A.STMT.ifS(A.EXPR.boolX(propX),
-                          A.STMT.blockS(group.statements))
+                          A.STMT.blockS(statements))
     }
 
     Statement cliWithS(final List<StatementUtils.Group> groups) {
