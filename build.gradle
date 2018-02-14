@@ -1,4 +1,12 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
 apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 repositories {
     jcenter()
@@ -12,6 +20,43 @@ dependencies {
 
     testCompile "com.h2database:h2:$h2"
     testCompile "org.spockframework:spock-core:$spock_core"
+}
+
+publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            groupId    releaseGroup
+            artifactId 'carbon'
+            version    releaseVersion
+
+            from components.java
+        }
+    }
+}
+
+bintray {
+ /* Normally taken from ~/.gradle/gradle.properties */
+    user         = project.properties.bintrayUser
+    key          = project.properties.bintrayKey
+    publish      = false
+    publications = ['mavenCustom']
+    pkg {
+        repo            = 'maven'
+        name            = 'carbon'
+        userOrg         = 'grooviter'
+        desc            =  releaseDesc
+        websiteUrl      = 'http://grooviter.github.io/carbon/'
+        issueTrackerUrl = 'https://github.com/grooviter/carbon/issues'
+        licenses        = ['Apache-2.0']
+        vcsUrl          = 'https://github.com/grooviter/carbon.git'
+        labels          = ['groovy', 'ast']
+        version {
+            name      = releaseVersion
+            desc      = 'Carbon Release'
+            released  = new Date()
+            vcsTag    = releaseVersion
+        }
+    }
 }
 
 task('console', dependsOn:'classes', type: JavaExec) {
