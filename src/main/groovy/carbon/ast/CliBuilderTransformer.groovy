@@ -6,12 +6,14 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MapEntryExpression
 import org.codehaus.groovy.ast.expr.PropertyExpression
+import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.ClosureExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
 import org.codehaus.groovy.ast.expr.DeclarationExpression
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.ast.stmt.Statement
+import org.codehaus.groovy.ast.stmt.ExpressionStatement
 import org.codehaus.groovy.ast.stmt.BlockStatement
 
 import asteroid.A
@@ -47,6 +49,13 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
      * @since 0.1.0
      */
     static final String DEFAULT_USAGE_LABEL = 'usage'
+
+    /**
+     * Default script's manual label
+     *
+     * @since 0.1.0
+     */
+    static final String DEFAULT_MANUAL_LABEL = 'manual'
 
     /**
      * Default script's usage name
@@ -118,13 +127,15 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     }
 
     List<Statement> createCases(List<StatementUtils.Group> groups) {
-        Statement helpUsageStatement = createHelpCaseStmt()
         List<Statement> allCasesButUsage = groups
             .findAll(this.&notUsage)
+            .findAll(this.&notManual)
             .collect(this.&createUserCaseStmt)
 
+        Statement manualStatement = createManualCaseStmt(groups)
+        Statement helpUsageStatement = createHelpCaseStmt()
 
-        return [helpUsageStatement] + allCasesButUsage
+        return [helpUsageStatement, manualStatement] + allCasesButUsage
     }
 
 
@@ -139,6 +150,31 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         Statement usageStatement = A.STMT.stmt(callUsageX)
 
         return createIfOptionStmt('h', [usageStatement])
+    }
+
+    Statement createManualCaseStmt(List<StatementUtils.Group> groups) {
+        StatementUtils.Group manualGroup = groups.find { StatementUtils.Group g ->
+            !notManual(g)
+        }
+
+        String name = manualGroup?.label?.name ?: ''
+        String desc = manualGroup?.label?.desc ?: ''
+
+        Expression textX = getManualTextX(manualGroup)
+
+        return createIfOptionStmt('m', [A.STMT.stmt(A.EXPR.callThisX('println', textX))])
+    }
+
+    Expression getManualTextX(StatementUtils.Group group) {
+        ExpressionStatement textS = (ExpressionStatement) group
+            ?.statements
+            ?.find(this.&isExpressionStmtAndHasAConstantExpression)
+
+        return textS?.expression ?: A.EXPR.constX('NO MANUAL FOUND')
+    }
+
+    Boolean isExpressionStmtAndHasAConstantExpression(Statement stmt) {
+        return stmt instanceof ExpressionStatement && stmt.expression instanceof ConstantExpression
     }
 
     Statement createIfOptionStmt(String option, List<Statement> statements) {
@@ -167,6 +203,16 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
      */
     Boolean notUsage(StatementUtils.Group group) {
         return group.label.name != DEFAULT_USAGE_LABEL
+    }
+
+    /**
+     * Predicate to filter all groups that are not the manual group
+     *
+     * @param group the group to be evaluated
+     * @return true if it's not the manual group false otherwise
+     */
+    Boolean notManual(StatementUtils.Group group) {
+        return group.label.name != DEFAULT_MANUAL_LABEL
     }
 
     MethodCallExpression cliWithX(List<MethodCallExpression> optionsXs) {
