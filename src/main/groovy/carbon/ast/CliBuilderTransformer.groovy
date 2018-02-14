@@ -190,7 +190,8 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
             .findAll(this.&notUsage)
             .collect(this.&createOptionExpression)
 
-        MethodCallExpression cliWithX = cliWithX(optionsX)
+        MethodCallExpression usageHelpOptX = createOptionExpression('help', '')
+        MethodCallExpression cliWithX = cliWithX(optionsX + [usageHelpOptX])
 
         return A.STMT.stmt(cliWithX)
     }
@@ -226,16 +227,20 @@ class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         String groupName = group?.label?.name ?: ''
         String groupDesc = group?.label?.desc ?: ''
 
+        return createOptionExpression(groupName, groupDesc)
+    }
+
+    MethodCallExpression createOptionExpression(String name, String desc) {
         List<MapEntryExpression> configEntries =
             [A.EXPR.mapEntryX(A.EXPR.constX('longOpt'),
-                              A.EXPR.constX(groupName)),
+                              A.EXPR.constX(name)),
              A.EXPR.mapEntryX(A.EXPR.constX('required'),
                               A.EXPR.constX(false))]
 
         MethodCallExpression methodCallX =
-            A.EXPR.callThisX("${groupName.find()}",
+            A.EXPR.callThisX("${name.find()}",
                              A.EXPR.mapX(configEntries),
-                             A.EXPR.constX(groupDesc))
+                             A.EXPR.constX(desc))
 
         return methodCallX
     }
