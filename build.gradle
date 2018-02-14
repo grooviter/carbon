@@ -1,0 +1,23 @@
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.github.grooviter:asteroid:$asteroid"
+    compile "org.codehaus.groovy:groovy-all:$groovy_all"
+    compile "org.yaml:snakeyaml:$snake_yaml"
+    compile "org.zeroturnaround:zt-zip:$zt"
+
+    testCompile "com.h2database:h2:$h2"
+    testCompile "org.spockframework:spock-core:$spock_core"
+}
+
+task('console', dependsOn:'classes', type: JavaExec) {
+    group = 'help'
+    description 'starts a Groovy console with the classpath of the current project'
+    main='groovy.ui.Console'
+    project.dependencies.add("compile", 'org.codehaus.groovy:groovy-console:2.4.12')
+    classpath = sourceSets.main.runtimeClasspath
+}
