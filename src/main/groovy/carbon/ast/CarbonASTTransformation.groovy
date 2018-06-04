@@ -1,18 +1,17 @@
 package carbon.ast
 
-import static asteroid.Phase.GLOBAL
-
 import groovy.transform.CompileStatic
 
-import asteroid.Phase
 import asteroid.AbstractGlobalTransformation
+import asteroid.Phase
 import asteroid.transformer.Transformer
+import org.codehaus.groovy.control.CompilePhase
 
 @CompileStatic
-@Phase(GLOBAL.SEMANTIC_ANALYSIS)
+@Phase(CompilePhase.SEMANTIC_ANALYSIS)
 class CarbonASTTransformation extends AbstractGlobalTransformation {
     @Override
     List<Class<Transformer>> getTransformers() {
-        return [CliBuilderTransformer]
+        return [CliBuilderTransformer] as List<Class<Transformer>>
     }
 }

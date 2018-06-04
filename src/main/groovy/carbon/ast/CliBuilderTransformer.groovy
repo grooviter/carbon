@@ -1,6 +1,6 @@
 package carbon.ast
 
-import groovy.util.CliBuilder
+import groovy.cli.picocli.CliBuilder
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MapExpression
