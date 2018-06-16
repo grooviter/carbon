@@ -23,14 +23,14 @@ public class Task {
     /**
      * @since 0.1.0
      */
-    private final MapExpression arguments;
+    private final List<TaskArgument> arguments;
 
     /**
      * @since 0.1.0
      */
     private final List<Statement> statements;
 
-    Task(ConstantExpression name, ConstantExpression description, MapExpression arguments, List<Statement> statements) {
+    Task(ConstantExpression name, ConstantExpression description, List<TaskArgument> arguments, List<Statement> statements) {
         this.name = name;
         this.description = description;
         this.arguments = arguments;
@@ -45,7 +45,7 @@ public class Task {
         return description;
     }
 
-    MapExpression getArguments() {
+    List<TaskArgument> getArguments() {
         return arguments;
     }
 

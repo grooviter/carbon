@@ -26,6 +26,8 @@ public class Constants {
 
     static final String DEFAULT_ARGS_PARAM_NAME = "args";
 
+    static final String DEFAULT_ARGS_PARAM_MANDATORY = "mandatory";
+
     static final String EMPTY = "";
 
     /**

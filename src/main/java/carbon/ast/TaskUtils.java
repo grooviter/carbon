@@ -4,10 +4,7 @@ import asteroid.Expressions;
 import asteroid.Utils;
 import asteroid.utils.StatementUtils;
 import org.codehaus.groovy.ast.MethodNode;
-import org.codehaus.groovy.ast.expr.ConstantExpression;
-import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.expr.MapEntryExpression;
-import org.codehaus.groovy.ast.expr.MapExpression;
+import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
@@ -17,6 +14,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static asteroid.Expressions.mapX;
+import static carbon.ast.Constants.DEFAULT_ARGS_DESCRIPTION;
+import static carbon.ast.Constants.DEFAULT_ARGS_PARAM_MANDATORY;
+import static carbon.ast.Constants.EMPTY;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -188,15 +189,49 @@ public class TaskUtils {
         ConstantExpression nameExpr = label.nameAsExpression();
         MapExpression mapExpr = (MapExpression) label.expression;
 
-        ConstantExpression descExpr = findMapEntry(mapExpr, Constants.DEFAULT_ARGS_DESCRIPTION)
+        ConstantExpression descExpr = findMapEntry(mapExpr, DEFAULT_ARGS_DESCRIPTION)
+            .map(MapEntryExpression::getValueExpression)
+            .filter(ConstantExpression.class::isInstance)
             .map(ConstantExpression.class::cast)
-            .orElse(Expressions.constX(Constants.EMPTY));
+            .orElse(Expressions.constX(EMPTY));
 
         MapExpression argsExpr = findMapEntry(mapExpr, Constants.DEFAULT_ARGS_PARAM_NAME)
+            .map(MapEntryExpression::getValueExpression)
+            .filter(MapExpression.class::isInstance)
             .map(MapExpression.class::cast)
-            .orElse(Expressions.mapX());
+            .orElse(mapX());
 
-        return new Task(nameExpr, descExpr, argsExpr, statements);
+        List<TaskArgument> argumentList = argsExpr
+            .getMapEntryExpressions()
+            .stream()
+            .map(TaskUtils::extractArgument)
+            .collect(toList());
+
+        return new Task(nameExpr, descExpr, argumentList, statements);
+    }
+
+    private static TaskArgument extractArgument(MapEntryExpression entryExpr) {
+        Expression keyExpression = entryExpr.getKeyExpression();
+        MapExpression valExpression = Optional
+            .of(entryExpr.getValueExpression())
+            .filter(MapExpression.class::isInstance)
+            .map(MapExpression.class::cast)
+            .orElse(mapX());
+
+        String name = keyExpression.getText();
+        String description = findMapEntry(valExpression, DEFAULT_ARGS_DESCRIPTION)
+                .map(MapEntryExpression::getValueExpression)
+                .map(Expression::getText)
+                .orElse(EMPTY);
+
+        Boolean mandatory = findMapEntry(valExpression, DEFAULT_ARGS_PARAM_MANDATORY)
+                .map(MapEntryExpression::getValueExpression)
+                .filter(BooleanExpression.class::isInstance)
+                .map(Expression::getText)
+                .map(Boolean::valueOf)
+                .orElse(false);
+
+        return new TaskArgument(name, description, mandatory);
     }
 
     /**

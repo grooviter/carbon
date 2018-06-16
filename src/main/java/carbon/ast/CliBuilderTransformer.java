@@ -11,10 +11,8 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static asteroid.Expressions.*;
 import static asteroid.Statements.*;
@@ -126,11 +124,17 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     }
 
     private static MethodCallExpression createOptX(String name, String desc) {
+        String optChar = Optional
+            .ofNullable(name)
+            .map(String::toLowerCase)
+            .map(n -> Constants.EMPTY + n.charAt(0))
+            .orElse(Constants.EMPTY);
+
         MapExpression mapExpr = mapX(
                 mapEntryX(constX("longOpt"), constX(name)),
                 mapEntryX(constX("required"), constX(false)));
 
-        return callThisX("${name.find()}", mapExpr, constX(desc));
+        return callThisX(optChar, mapExpr, constX(desc));
     }
 
     private static MethodCallExpression cliWithX(List<MethodCallExpression> optionsXs) {
