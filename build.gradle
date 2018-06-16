@@ -16,7 +16,10 @@ repositories {
 }
 
 dependencies {
-    compile "com.github.grooviter:asteroid:$asteroid"
+    compile("com.github.grooviter:asteroid:$asteroid") {
+        exclude module: "groovy-all"
+        exclude module: "groovy"
+    }
     compile "org.codehaus.groovy:groovy-all:$groovy_all"
     compile "org.yaml:snakeyaml:$snake_yaml"
     compile "org.zeroturnaround:zt-zip:$zt"
