@@ -4,6 +4,7 @@ import asteroid.Criterias;
 import asteroid.Statements;
 import asteroid.transformer.AbstractMethodNodeTransformer;
 import asteroid.utils.StatementUtils;
+import carbon.ast.model.Task;
 import groovy.cli.picocli.CliBuilder;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.expr.*;
@@ -12,7 +13,6 @@ import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static asteroid.Expressions.*;
 import static asteroid.Statements.*;
@@ -26,16 +26,7 @@ import static java.util.stream.Collectors.*;
  *
  * @since 0.1.0
  */
-public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
-
-    /**
-     * @since 0.1.0
-     */
-    private static final Task DEFAULT_USAGE_TASK = new Task(
-            constX(DEFAULT_USAGE_NAME),
-            constX(DEFAULT_USAGE_DESC),
-            null,
-            null);
+public class Transformer extends AbstractMethodNodeTransformer {
 
     /**
      * Default constructor
@@ -43,16 +34,16 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
      * @param sourceUnit in case we need to interact with compiler
      * @since 0.1.0
      */
-    public CliBuilderTransformer(final SourceUnit sourceUnit) {
+    public Transformer(final SourceUnit sourceUnit) {
         super(sourceUnit, Criterias.byMethodNodeName(SCRIPT_METHOD_NAME));
     }
 
     @Override
     public void transformMethod(final MethodNode methodNode) {
-        List<StatementUtils.Group> groups = TaskUtils.getGroupsFromMethod(methodNode);
+        List<StatementUtils.Group> groups = Tasks.getGroupsFromMethod(methodNode);
 
-        Task usageTask = TaskUtils.getUsageTask(groups).orElse(DEFAULT_USAGE_TASK);
-        List<Task> nonUsageTasks = TaskUtils.getNonUsageTasks(groups);
+        Task usageTask = Tasks.getUsageTask(groups).orElse(DEFAULT_USAGE_TASK);
+        List<Task> nonUsageTasks = Tasks.getNonUsageTasks(groups);
 
         List<Statement> cliConfiguration = asList(
                 newBuilderS(usageTask),
@@ -106,7 +97,7 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         MethodCallExpression usageHelpOptX = createOptX("help", "");
         List<MethodCallExpression> optionsX = tasks
             .stream()
-            .map(CliBuilderTransformer::createOptX)
+            .map(Transformer::createOptX)
             .collect(collectingAndThen(toList(), (list) -> {
                 list.add(usageHelpOptX);
 
@@ -127,8 +118,8 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         String optChar = Optional
             .ofNullable(name)
             .map(String::toLowerCase)
-            .map(n -> Constants.EMPTY + n.charAt(0))
-            .orElse(Constants.EMPTY);
+            .map(n -> EMPTY + n.charAt(0))
+            .orElse(EMPTY);
 
         MapExpression mapExpr = mapX(
                 mapEntryX(constX("longOpt"), constX(name)),
@@ -151,16 +142,16 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     /**
      * Creates the statement where the CliBuilder parses the script arguments
      *
-     * <code>options = cli.parse(args)</code>
+     * <code>options = cli.parse(strategies)</code>
      *
-     * @return a {@link Statement} with an expression parsing the script args
+     * @return a {@link Statement} with an expression parsing the script strategies
      * @since 0.1.0
      */
     static Statement parseArgsStmt() {
         DeclarationExpression declarationX = varDeclarationX(
             "options",
             Object.class,
-            callX(varX(CLI_BUILDER_NAME), "parse", varX("args")));
+            callX(varX(CLI_BUILDER_NAME), "parse", varX("strategies")));
 
         return stmt(declarationX);
     }
@@ -178,8 +169,8 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
     static List<Statement> createCases(List<Task> taskList) {
         return taskList
             .stream()
-            .map(CliBuilderTransformer::transformLiteralGroup)
-            .map(CliBuilderTransformer::createNormalCaseS)
+            .map(Transformer::transformLiteralGroup)
+            .map(Transformer::createNormalCaseS)
             .collect(collectingAndThen(toCollection(LinkedList::new), (list) -> {
                 list.addFirst(createHelpCaseS());
 
@@ -210,7 +201,7 @@ public class CliBuilderTransformer extends AbstractMethodNodeTransformer {
         if (statements.size() == 1) {
             Statement stmt = statements.get(0);
 
-            if (!TaskUtils.isExpressionStmtAndHasAConstantExpression(stmt)) {
+            if (!Tasks.isExpressionStmtAndHasAConstantExpression(stmt)) {
                 ExpressionStatement statement = (ExpressionStatement) stmt;
                 MethodCallExpression printlnX = callThisX("println", statement.getExpression());
                 Statement printlnS = stmt(printlnX);

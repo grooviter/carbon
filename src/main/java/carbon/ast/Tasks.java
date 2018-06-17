@@ -3,8 +3,13 @@ package carbon.ast;
 import asteroid.Expressions;
 import asteroid.Utils;
 import asteroid.utils.StatementUtils;
+import carbon.ast.model.Task;
+import carbon.ast.model.TaskArgument;
 import org.codehaus.groovy.ast.MethodNode;
-import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.ast.expr.ConstantExpression;
+import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.MapEntryExpression;
+import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
@@ -12,13 +17,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static asteroid.Expressions.mapX;
 import static carbon.ast.Constants.DEFAULT_ARGS_DESCRIPTION;
-import static carbon.ast.Constants.DEFAULT_ARGS_PARAM_MANDATORY;
 import static carbon.ast.Constants.EMPTY;
+import static carbon.ast.Functions.not;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -26,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @since 0.1.0
  */
-public class TaskUtils {
+public class Tasks {
 
     /**
      * Alias of Function<StatementUtils.Group, Optional<Task>>
@@ -46,14 +51,14 @@ public class TaskUtils {
      */
     private static Optional<Task> extractTask(final StatementUtils.Group group) {
         final List<OptionalTask> strategyList = asList(
-            TaskUtils::fromMapStrategy,
-            TaskUtils::fromTextStrategy
+            Tasks::fromMapStrategy,
+            Tasks::fromTextStrategy
         );
 
         return strategyList
             .stream()
             .map(strategy -> strategy.apply(group))
-            .flatMap(TaskUtils::flatten)
+            .flatMap(Functions::flatten)
             .findFirst();
     }
 
@@ -62,12 +67,12 @@ public class TaskUtils {
      * @return
      * @since 0.1.0
      */
-    static Optional<Task> getUsageTask(List<StatementUtils.Group> groupList) {
+    public static Optional<Task> getUsageTask(List<StatementUtils.Group> groupList) {
         return groupList
             .stream()
-            .filter(TaskUtils::isUsageTask)
-            .map(TaskUtils::extractTask)
-            .flatMap(TaskUtils::flatten)
+            .filter(Tasks::isUsageTask)
+            .map(Tasks::extractTask)
+            .flatMap(Functions::flatten)
             .findFirst();
     }
 
@@ -76,25 +81,17 @@ public class TaskUtils {
      * @return
      * @since 0.1.0
      */
-    static List<Task> getNonUsageTasks(List<StatementUtils.Group> groupList) {
+    public static List<Task> getNonUsageTasks(List<StatementUtils.Group> groupList) {
         return groupList
             .stream()
-            .filter(not(TaskUtils::isUsageTask))
-            .map(TaskUtils::extractTask)
-            .flatMap(TaskUtils::flatten)
+            .filter(not(Tasks::isUsageTask))
+            .map(Tasks::extractTask)
+            .flatMap(Functions::flatten)
             .collect(toList());
     }
 
-    private static Stream<Task> flatten(Optional<Task> wrapped) {
-        return wrapped.map(Stream::of).orElseGet(Stream::empty);
-    }
-
-    private static Boolean isUsageTask(StatementUtils.Group group) {
+    public static Boolean isUsageTask(StatementUtils.Group group) {
         return group.label.name.equals(Constants.DEFAULT_USAGE_NAME);
-    }
-
-    private static <T> Predicate<T> not(Predicate<T> predicate) {
-        return predicate.negate();
     }
 
     /**
@@ -135,7 +132,7 @@ public class TaskUtils {
      * @since 0.1.0
      */
     private static Optional<Task> fromMapStrategy(final StatementUtils.Group group) {
-        return fromStrategy(group, TaskUtils::isMapExpression, TaskUtils::createTaskFromMap);
+        return fromStrategy(group, Tasks::isMapExpression, Tasks::createTaskFromMap);
     }
 
     /**
@@ -152,7 +149,7 @@ public class TaskUtils {
      * @since 0.1.0
      */
     private static Optional<Task> fromTextStrategy(final StatementUtils.Group group) {
-        return fromStrategy(group, TaskUtils::isTextExpression, TaskUtils::createTaskFromText);
+        return fromStrategy(group, Tasks::isTextExpression, Tasks::createTaskFromText);
     }
 
     /**
@@ -170,7 +167,7 @@ public class TaskUtils {
                                        Function<StatementUtils.Group, Task> transform) {
         return Optional
             .ofNullable(group)
-            .filter(TaskUtils::isThereLabel)
+            .filter(Tasks::isThereLabel)
             .filter(cond)
             .map(transform);
     }
@@ -204,34 +201,11 @@ public class TaskUtils {
         List<TaskArgument> argumentList = argsExpr
             .getMapEntryExpressions()
             .stream()
-            .map(TaskUtils::extractArgument)
+            .map(Arguments::extractArgument)
+            .flatMap(Functions::flatten)
             .collect(toList());
 
         return new Task(nameExpr, descExpr, argumentList, statements);
-    }
-
-    private static TaskArgument extractArgument(MapEntryExpression entryExpr) {
-        Expression keyExpression = entryExpr.getKeyExpression();
-        MapExpression valExpression = Optional
-            .of(entryExpr.getValueExpression())
-            .filter(MapExpression.class::isInstance)
-            .map(MapExpression.class::cast)
-            .orElse(mapX());
-
-        String name = keyExpression.getText();
-        String description = findMapEntry(valExpression, DEFAULT_ARGS_DESCRIPTION)
-                .map(MapEntryExpression::getValueExpression)
-                .map(Expression::getText)
-                .orElse(EMPTY);
-
-        Boolean mandatory = findMapEntry(valExpression, DEFAULT_ARGS_PARAM_MANDATORY)
-                .map(MapEntryExpression::getValueExpression)
-                .filter(BooleanExpression.class::isInstance)
-                .map(Expression::getText)
-                .map(Boolean::valueOf)
-                .orElse(false);
-
-        return new TaskArgument(name, description, mandatory);
     }
 
     /**
@@ -247,7 +221,7 @@ public class TaskUtils {
         ConstantExpression nameExpr = label.nameAsExpression();
         ConstantExpression descExpr = (ConstantExpression) label.expression;
 
-        return new Task(nameExpr, descExpr, null, group.statements);
+        return new Task(nameExpr, descExpr, emptyList(), group.statements);
     }
 
     /**

@@ -1,5 +1,9 @@
 package carbon.ast;
 
+import carbon.ast.model.Task;
+
+import static asteroid.Expressions.constX;
+
 public class Constants {
     /**
      * Name of the method to be transformed
@@ -20,15 +24,15 @@ public class Constants {
      *
      * @since 0.1.0
      */
-    static final String DEFAULT_USAGE_NAME = "usage";
+    public static final String DEFAULT_USAGE_NAME = "usage";
 
-    static final String DEFAULT_ARGS_DESCRIPTION = "desc";
+    public static final String DEFAULT_ARGS_DESCRIPTION = "desc";
 
-    static final String DEFAULT_ARGS_PARAM_NAME = "args";
+    public static final String DEFAULT_ARGS_PARAM_NAME = "strategies";
 
-    static final String DEFAULT_ARGS_PARAM_MANDATORY = "mandatory";
+    public static final String DEFAULT_ARGS_PARAM_MANDATORY = "mandatory";
 
-    static final String EMPTY = "";
+    public static final String EMPTY = "";
 
     /**
      * Default script"s usage description
@@ -36,5 +40,14 @@ public class Constants {
      * @since 0.1.0
      */
     static final String DEFAULT_USAGE_DESC = "It would be nice to know how to use this script right ? Shame on you!";
+
+    /**
+     * @since 0.1.0
+     */
+    static final Task DEFAULT_USAGE_TASK = new Task(
+            constX(DEFAULT_USAGE_NAME),
+            constX(DEFAULT_USAGE_DESC),
+            null,
+            null);
 
 }

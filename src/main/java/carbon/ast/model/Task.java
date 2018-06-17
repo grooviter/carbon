@@ -1,7 +1,6 @@
-package carbon.ast;
+package carbon.ast.model;
 
 import org.codehaus.groovy.ast.expr.ConstantExpression;
-import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import java.util.List;
@@ -30,26 +29,26 @@ public class Task {
      */
     private final List<Statement> statements;
 
-    Task(ConstantExpression name, ConstantExpression description, List<TaskArgument> arguments, List<Statement> statements) {
+    public Task(ConstantExpression name, ConstantExpression description, List<TaskArgument> arguments, List<Statement> statements) {
         this.name = name;
         this.description = description;
         this.arguments = arguments;
         this.statements = statements;
     }
 
-    ConstantExpression getName() {
+    public ConstantExpression getName() {
         return name;
     }
 
-    ConstantExpression getDescription() {
+    public ConstantExpression getDescription() {
         return description;
     }
 
-    List<TaskArgument> getArguments() {
+    public List<TaskArgument> getArguments() {
         return arguments;
     }
 
-    List<Statement> getStatements() {
+    public List<Statement> getStatements() {
         return statements;
     }
 }
