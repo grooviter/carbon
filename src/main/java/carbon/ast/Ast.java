@@ -3,10 +3,8 @@ package carbon.ast;
 import asteroid.A;
 import carbon.ast.model.Argument;
 import carbon.ast.model.Usage;
-import groovy.cli.OptionField;
 import groovy.cli.picocli.CliBuilder;
 import groovy.cli.picocli.OptionAccessor;
-import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.Statement;
@@ -20,6 +18,8 @@ import static carbon.ast.Constants.CLI_BUILDER_NAME;
 import static carbon.ast.Constants.DEFAULT_USAGE_NAME;
 
 public class Ast {
+
+    public static final String PARAMS = "params";
 
     /**
      * Creates the {@link Statement} where the CliBuilder instance declaration
@@ -62,13 +62,13 @@ public class Ast {
                 varX("args"));
 
         DeclarationExpression declarationExpression = varDeclarationX(
-                "options", OptionAccessor.class, parseFromInstanceX);
+                PARAMS, OptionAccessor.class, parseFromInstanceX);
 
         return stmt(declarationExpression);
     }
 
     private static Statement createIfOptionStmt(String option, List<Statement> statements) {
-        PropertyExpression propX = propX(varX("options"), constX(option));
+        PropertyExpression propX = propX(varX(PARAMS), constX(option));
 
         return ifS(boolX(propX), blockS(statements));
     }
@@ -127,7 +127,9 @@ public class Ast {
     static Statement createFieldStmt(Argument argument) {
         MapExpression mapExpression = mapX(
             mapEntryX(constX("type"), classX(argument.getType())),
-            mapEntryX(constX("longOpt"), constX(argument.getName()))
+            mapEntryX(constX("longOpt"), constX(argument.getName())),
+            mapEntryX(constX("defaultValue"), constX(argument.getDefaultValue())),
+            mapEntryX(constX("description"), constX(argument.getDescription()))
         );
 
         MethodCallExpression cliOptionX =

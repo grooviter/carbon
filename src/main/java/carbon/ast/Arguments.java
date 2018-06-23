@@ -1,13 +1,17 @@
 package carbon.ast;
 
 import carbon.ast.model.Argument;
+import groovy.lang.GroovyObject;
 import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.StringGroovyMethods;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static asteroid.Expressions.constX;
 import static carbon.ast.Constants.*;
 
 class Arguments {
@@ -16,7 +20,8 @@ class Arguments {
             "help",
             "command help",
             false,
-            Object.class);
+            String.class,
+            "");
 
     interface OptionalArgument extends
             Function<MapEntryExpression, Optional<Argument>> {
@@ -62,7 +67,12 @@ class Arguments {
                 .flatMap(Arguments::extractTypeValue)
                 .orElse(String.class);
 
-        return new Argument(name, description, mandatory, type);
+        String defaultValue = findMapEntry(valExpression, "value")
+                .map(MapEntryExpression::getValueExpression)
+                .map(Expression::getText)
+                .orElse(EMPTY);
+
+        return new Argument(name, description, mandatory, type, defaultValue);
     }
 
     private static Optional<Boolean> extractMandatoryValue(Expression expr) {
@@ -98,7 +108,7 @@ class Arguments {
                 .of(argumentList)
                 .flatMap(getArgNo(0))
                 .map(Expression::getText)
-                .orElse(EMPTY);
+                .orElse(name);
 
         Boolean mandatory = Optional
                 .of(argumentList)
@@ -112,7 +122,12 @@ class Arguments {
                 .flatMap(Arguments::extractTypeValue)
                 .orElse(String.class);
 
-        return new Argument(name, description, mandatory, type);
+        String defaultValue = Optional.of(argumentList)
+                .flatMap(getArgNo(3))
+                .map(Expression::getText)
+                .orElse(EMPTY);
+
+        return new Argument(name, description, mandatory, type, defaultValue);
     }
 
     private static Function<List<Expression>, Optional<Expression>> getArgNo(Integer no) {
