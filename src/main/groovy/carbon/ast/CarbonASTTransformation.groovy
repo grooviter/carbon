@@ -11,7 +11,7 @@ import org.codehaus.groovy.control.CompilePhase
  * @since 0.1.0
  */
 @CompileStatic
-@Phase(CompilePhase.SEMANTIC_ANALYSIS)
+@Phase(CompilePhase.CONVERSION)
 class CarbonASTTransformation extends AbstractGlobalTransformation {
     @Override
     List<Class<Transformer>> getTransformers() {

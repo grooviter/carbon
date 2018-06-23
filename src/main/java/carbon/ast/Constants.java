@@ -28,8 +28,6 @@ public class Constants {
 
     public static final String DEFAULT_ARGS_DESCRIPTION = "desc";
 
-    public static final String DEFAULT_ARGS_PARAM_NAME = "strategies";
-
     public static final String DEFAULT_ARGS_PARAM_MANDATORY = "mandatory";
 
     public static final String EMPTY = "";
@@ -44,10 +42,6 @@ public class Constants {
     /**
      * @since 0.1.0
      */
-    static final Task DEFAULT_USAGE_TASK = new Task(
-            constX(DEFAULT_USAGE_NAME),
-            constX(DEFAULT_USAGE_DESC),
-            null,
-            null);
+    static final Task DEFAULT_USAGE_TASK = null;
 
 }

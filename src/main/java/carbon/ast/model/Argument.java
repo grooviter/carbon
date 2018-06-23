@@ -1,12 +1,12 @@
 package carbon.ast.model;
 
-public class TaskArgument {
+public class Argument {
     private final String name;
     private final String description;
     private final Boolean mandatory;
     private final Class type;
 
-    public TaskArgument(String name, String description, Boolean mandatory, Class type) {
+    public Argument(String name, String description, Boolean mandatory, Class type) {
         this.name = name;
         this.description = description;
         this.mandatory = mandatory;

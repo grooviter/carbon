@@ -1,6 +1,6 @@
 package carbon.ast;
 
-import carbon.ast.model.TaskArgument;
+import carbon.ast.model.Argument;
 import org.codehaus.groovy.ast.expr.*;
 
 import java.util.Arrays;
@@ -10,14 +10,20 @@ import java.util.function.Function;
 
 import static carbon.ast.Constants.*;
 
-public class Arguments {
+class Arguments {
+
+    public static Argument DEFAULT_ARGUMENT_HELP = new Argument(
+            "help",
+            "command help",
+            false,
+            Object.class);
 
     interface OptionalArgument extends
-            Function<MapEntryExpression, Optional<TaskArgument>> {
+            Function<MapEntryExpression, Optional<Argument>> {
 
     }
 
-    public static Optional<TaskArgument> extractArgument(MapEntryExpression entryExpression) {
+    static Optional<Argument> extractArgument(MapEntryExpression entryExpression) {
         List<OptionalArgument> strategies = Arrays.asList(
                 Arguments::extractArgumentFromMap,
                 Arguments::extractArgumentFromList);
@@ -29,7 +35,7 @@ public class Arguments {
             .findFirst();
     }
 
-    private static Optional<TaskArgument> extractArgumentFromMap(MapEntryExpression entryExpr) {
+    private static Optional<Argument> extractArgumentFromMap(MapEntryExpression entryExpr) {
         Expression keyExpression = entryExpr.getKeyExpression();
         String name = keyExpression.getText();
 
@@ -40,7 +46,7 @@ public class Arguments {
             .map(mapExpr -> createTaskArgument(name, mapExpr));
     }
 
-    private static TaskArgument createTaskArgument(String name, MapExpression valExpression) {
+    private static Argument createTaskArgument(String name, MapExpression valExpression) {
         String description = findMapEntry(valExpression, DEFAULT_ARGS_DESCRIPTION)
                 .map(MapEntryExpression::getValueExpression)
                 .map(Expression::getText)
@@ -56,7 +62,7 @@ public class Arguments {
                 .flatMap(Arguments::extractTypeValue)
                 .orElse(String.class);
 
-        return new TaskArgument(name, description, mandatory, type);
+        return new Argument(name, description, mandatory, type);
     }
 
     private static Optional<Boolean> extractMandatoryValue(Expression expr) {
@@ -74,7 +80,7 @@ public class Arguments {
                 .map(classExpr -> classExpr.getType().getTypeClass());
     }
 
-    private static Optional<TaskArgument> extractArgumentFromList(MapEntryExpression entryExpr) {
+    private static Optional<Argument> extractArgumentFromList(MapEntryExpression entryExpr) {
         Expression keyExpression = entryExpr.getKeyExpression();
         String name = keyExpression.getText();
 
@@ -85,7 +91,7 @@ public class Arguments {
             .map(listExpr -> createTaskArgument(name, listExpr));
     }
 
-    private static TaskArgument createTaskArgument(String name, ListExpression valExpression) {
+    private static Argument createTaskArgument(String name, ListExpression valExpression) {
         List<Expression> argumentList = valExpression.getExpressions();
 
         String description = Optional
@@ -106,7 +112,7 @@ public class Arguments {
                 .flatMap(Arguments::extractTypeValue)
                 .orElse(String.class);
 
-        return new TaskArgument(name, description, mandatory, type);
+        return new Argument(name, description, mandatory, type);
     }
 
     private static Function<List<Expression>, Optional<Expression>> getArgNo(Integer no) {

@@ -1,6 +1,5 @@
 package carbon.ast.model;
 
-import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import java.util.List;
@@ -9,43 +8,28 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Task {
-    /**
-     * @since 0.1.0
-     */
-    private final ConstantExpression name;
-
-    /**
-     * @since 0.1.0
-     */
-    private final ConstantExpression description;
-
-    /**
-     * @since 0.1.0
-     */
-    private final List<TaskArgument> arguments;
-
-    /**
-     * @since 0.1.0
-     */
+    private final List<Argument> arguments;
+    private final MetaInfo metaInfo;
+    private final Usage usage;
     private final List<Statement> statements;
 
-    public Task(ConstantExpression name, ConstantExpression description, List<TaskArgument> arguments, List<Statement> statements) {
-        this.name = name;
-        this.description = description;
+    public Task(List<Argument> arguments, MetaInfo metaInfo, Usage usage, List<Statement> statements) {
         this.arguments = arguments;
+        this.metaInfo = metaInfo;
+        this.usage = usage;
         this.statements = statements;
     }
 
-    public ConstantExpression getName() {
-        return name;
-    }
-
-    public ConstantExpression getDescription() {
-        return description;
-    }
-
-    public List<TaskArgument> getArguments() {
+    public List<Argument> getArguments() {
         return arguments;
+    }
+
+    public MetaInfo getMetaInfo() {
+        return metaInfo;
+    }
+
+    public Usage getUsage() {
+        return usage;
     }
 
     public List<Statement> getStatements() {
