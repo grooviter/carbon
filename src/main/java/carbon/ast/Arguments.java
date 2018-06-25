@@ -20,8 +20,8 @@ class Arguments {
             "help",
             "command help",
             false,
-            String.class,
-            "");
+            null,
+            null);
 
     interface OptionalArgument extends
             Function<MapEntryExpression, Optional<Argument>> {
@@ -70,7 +70,7 @@ class Arguments {
         String defaultValue = findMapEntry(valExpression, "value")
                 .map(MapEntryExpression::getValueExpression)
                 .map(Expression::getText)
-                .orElse(EMPTY);
+                .orElse(null);
 
         return new Argument(name, description, mandatory, type, defaultValue);
     }
