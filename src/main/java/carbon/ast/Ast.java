@@ -9,8 +9,12 @@ import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.Statement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static asteroid.Expressions.*;
 import static asteroid.Statements.*;
@@ -124,20 +128,37 @@ public class Ast {
      *         defaultValue = "",
      *         convert = String) table
      */
-    static Statement createFieldStmt(Argument argument) {
-        MapExpression mapExpression = mapX(
-            mapEntryX(constX("type"), classX(argument.getType())),
-            mapEntryX(constX("longOpt"), constX(argument.getName())),
-            mapEntryX(constX("defaultValue"), constX(argument.getDefaultValue())),
-            mapEntryX(constX("description"), constX(argument.getDescription()))
-        );
+    static Statement createFieldStmt(Argument arg) {
+        MapExpression mapExpression = Optional.of(mapX(new ArrayList<>()))
+                .map(addArgumentAttr("type", arg.getType(), () -> classX(arg.getType())))
+                .map(addArgumentAttr("longOpt", arg.getName(), () -> constX(arg.getName())))
+                .map(addArgumentAttr("defaultValue", arg.getDefaultValue(), () -> constX(arg.getDefaultValue())))
+                .map(addArgumentAttr("description", arg.getDescription(), () -> constX(arg.getDescription())))
+                .orElse(mapX());
 
         MethodCallExpression cliOptionX =
                 callX(varX(CLI_BUILDER_NAME),
-                        "" + argument.getName().charAt(0),
+                        "" + arg.getName().charAt(0),
                         mapExpression,
-                        constX(argument.getName()));
+                        constX(arg.getName()));
 
         return stmt(cliOptionX);
+    }
+
+    private static Function<MapExpression, MapExpression> addArgumentAttr(
+            final String argumentAttrName,
+            final Object value,
+            final Supplier<Expression> expression) {
+        final Optional<?> optionalValue = Optional
+            .ofNullable(value)
+            .map(Object::toString)
+            .map(String::isEmpty);
+
+        return (MapExpression mapX) -> {
+            if (optionalValue.isPresent()) {
+                mapX.addMapEntryExpression(mapEntryX(constX(argumentAttrName), expression.get()));
+            }
+            return mapX;
+        };
     }
 }

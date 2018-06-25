@@ -125,7 +125,7 @@ class Arguments {
         String defaultValue = Optional.of(argumentList)
                 .flatMap(getArgNo(3))
                 .map(Expression::getText)
-                .orElse(EMPTY);
+                .orElse(null);
 
         return new Argument(name, description, mandatory, type, defaultValue);
     }
