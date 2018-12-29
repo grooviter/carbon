@@ -78,7 +78,7 @@ class Arguments {
     private static Optional<Boolean> extractMandatoryValue(Expression expr) {
         return Optional
             .ofNullable(expr)
-            .filter(BooleanExpression.class::isInstance)
+            .filter(ConstantExpression.class::isInstance)
             .map(Expression::getText)
             .map(Boolean::valueOf);
     }
