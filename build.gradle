@@ -20,7 +20,9 @@ dependencies {
         exclude module: "groovy-all"
         exclude module: "groovy"
     }
-    compile "org.codehaus.groovy:groovy-all:$groovy_all"
+    compile "org.codehaus.groovy:groovy:$groovy_all"
+    compile "org.codehaus.groovy:groovy-sql:$groovy_all"
+    compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
     compile "org.yaml:snakeyaml:$snake_yaml"
     compile "org.zeroturnaround:zt-zip:$zt"
 
