@@ -71,12 +71,6 @@ public class Ast {
         return stmt(declarationExpression);
     }
 
-    private static Statement createIfOptionStmt(String option, List<Statement> statements) {
-        PropertyExpression propX = propX(varX(PARAMS), constX(option));
-
-        return ifS(boolX(propX), blockS(statements));
-    }
-
     /**
      * <code>
      *   cli.usageMessage.with {
@@ -112,10 +106,9 @@ public class Ast {
     }
 
     static Statement usageStmt() {
-        Statement usageCallStmt = stmt(callX(varX("cli"), "usage"));
         Statement returnStmt = returnS(constX(""));
 
-        return createIfOptionStmt("help", Arrays.asList(usageCallStmt, returnStmt));
+        return ifS(boolX(notX(varX("params"))), blockS(Arrays.asList(emptyStatement(), returnStmt)));
     }
 
     /**
@@ -134,6 +127,7 @@ public class Ast {
                 .map(addArgumentAttr("longOpt", arg.getName(), () -> constX(arg.getName())))
                 .map(addArgumentAttr("defaultValue", arg.getDefaultValue(), () -> constX(arg.getDefaultValue())))
                 .map(addArgumentAttr("description", arg.getDescription(), () -> constX(arg.getDescription())))
+                .map(addArgumentAttr("required", arg.getMandatory(), () -> constX(arg.getMandatory())))
                 .orElse(mapX());
 
         MethodCallExpression cliOptionX =
