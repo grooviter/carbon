@@ -21,7 +21,8 @@ class Arguments {
             "command help",
             false,
             null,
-            null);
+            null,
+            true);
 
     interface OptionalArgument extends
             Function<MapEntryExpression, Optional<Argument>> {
@@ -72,7 +73,7 @@ class Arguments {
                 .map(Expression::getText)
                 .orElse(null);
 
-        return new Argument(name, description, mandatory, type, defaultValue);
+        return new Argument(name, description, mandatory, type, defaultValue, false);
     }
 
     private static Optional<Boolean> extractMandatoryValue(Expression expr) {
@@ -127,7 +128,7 @@ class Arguments {
                 .map(Expression::getText)
                 .orElse(null);
 
-        return new Argument(name, description, mandatory, type, defaultValue);
+        return new Argument(name, description, mandatory, type, defaultValue, false);
     }
 
     private static Function<List<Expression>, Optional<Expression>> getArgNo(Integer no) {

@@ -6,13 +6,15 @@ public class Argument {
     private final Boolean mandatory;
     private final Class type;
     private final String defaultValue;
+    private final Boolean isUsageHelp;
 
-    public Argument(String name, String description, Boolean mandatory, Class type, String defaultValue) {
+    public Argument(String name, String description, Boolean mandatory, Class type, String defaultValue, Boolean isUsageHelp) {
         this.name = name;
         this.description = description;
         this.mandatory = mandatory;
         this.type = type;
         this.defaultValue = defaultValue;
+        this.isUsageHelp = isUsageHelp;
     }
 
     public String getDescription() {
@@ -33,5 +35,9 @@ public class Argument {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    public Boolean isUsageHelp() {
+        return this.isUsageHelp;
     }
 }

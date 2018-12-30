@@ -7,7 +7,7 @@ import groovy.cli.picocli.CliBuilder;
 import groovy.cli.picocli.OptionAccessor;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,10 +105,30 @@ public class Ast {
         return stmt(callX(usageMessageX, method, constX(value)));
     }
 
+    /**
+     * if (!params) {
+     *   return
+     * }
+     *
+     * if (params.help) {
+     *   cli.usage()
+     *   return
+     * }
+     *
+     *
+     */
     static Statement usageStmt() {
-        Statement returnStmt = returnS(constX(""));
+        IfStatement ifNotParams =  ifS(boolX(notX(varX("params"))), emptyReturnStmt());
 
-        return ifS(boolX(notX(varX("params"))), blockS(Arrays.asList(emptyStatement(), returnStmt)));
+        MethodCallExpression cliUsage = callX(varX("cli"), "usage");
+        List<Statement> stmtList = Arrays.asList(stmt(cliUsage), emptyReturnStmt());
+        IfStatement ifParamsHelp = ifS(boolX(propX(varX("params"), constX("help"))), blockS(stmtList));
+
+        return blockS(Arrays.asList(ifNotParams, ifParamsHelp));
+    }
+
+    static Statement emptyReturnStmt() {
+        return returnS(constX(""));
     }
 
     /**
@@ -128,6 +148,7 @@ public class Ast {
                 .map(addArgumentAttr("defaultValue", arg.getDefaultValue(), () -> constX(arg.getDefaultValue())))
                 .map(addArgumentAttr("description", arg.getDescription(), () -> constX(arg.getDescription())))
                 .map(addArgumentAttr("required", arg.getMandatory(), () -> constX(arg.getMandatory())))
+                .map(addArgumentAttr("usageHelp", arg.isUsageHelp(), () -> constX(arg.isUsageHelp())))
                 .orElse(mapX());
 
         MethodCallExpression cliOptionX =
