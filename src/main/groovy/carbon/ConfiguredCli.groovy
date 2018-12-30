@@ -3,6 +3,7 @@ package carbon
 import groovy.sql.Sql
 import groovy.transform.TupleConstructor
 import carbon.zip.ZipCli
+import carbon.log.LoggerCli
 
 /**
  *
@@ -53,5 +54,14 @@ class ConfiguredCli {
      */
     ZipCli zip() {
         return new ZipCli()
+    }
+
+    /**
+     *
+     * @return
+     * @since 0.1.4
+     */
+    LoggerCli logger() {
+        return new LoggerCli()
     }
 }

@@ -23,6 +23,7 @@ dependencies {
     compile "org.codehaus.groovy:groovy:$groovy_all"
     compile "org.codehaus.groovy:groovy-sql:$groovy_all"
     compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
+    compile "org.fusesource.jansi:jansi:$jansiVersion"
     compile "org.yaml:snakeyaml:$snake_yaml"
     compile "org.zeroturnaround:zt-zip:$zt"
 
