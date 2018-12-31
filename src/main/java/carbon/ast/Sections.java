@@ -77,6 +77,7 @@ class Sections {
     private static Usage extractUsage(List<StatementUtils.Group> groups, MetaInfo metaInfo) {
         Optional<Section> section = findSection("usage", groups);
         Optional<Section> taskDescription = findSection("description", groups);
+        Optional<Section> footerDescription = findSection("footer", groups);
 
         List<MapEntryExpression> parts = section
             .map(Section::getMapExpression)
@@ -87,17 +88,21 @@ class Sections {
             .map(Section::getDescription)
             .orElse(Constants.DEFAULT_USAGE_DESC);
 
+        String footerDefaults = footerDescription
+            .map(Section::getDescription)
+            .orElse(Constants.DEFAULT_USAGE_DESC);
+
         String headerHeading = findParam(parts,
                 "headerHeading",
                 "%n@|bold,underline NAME|@:%n");
 
         String header = findParam(parts,
                 "header",
-                format("@|bold,white %s |@%n", metaInfo.getName()));
+                format("@|bold,white %s (%s) |@%n", metaInfo.getName(), metaInfo.getVersion()));
 
         String synopsisHeading = findParam(parts,
                 "synopsisHeading",
-                "@|bold,underline USAGE|@:%n");
+                "@|bold,underline SYNOPSIS|@:%n");
 
         String descriptionHeading = findParam(parts,
                 "descriptionHeading",
@@ -109,11 +114,11 @@ class Sections {
 
         String footerHeading = findParam(parts,
                 "footerHeading",
-                "%n@|bold,underline VERSION|@:%n");
+                "%n@|bold,underline AUTHORS|@:%n");
 
         String footer = findParam(parts,
                 "footer",
-                metaInfo.getVersion());
+                footerDefaults);
 
         String optionListHeading = findParam(parts,
                 "optionListHeading",

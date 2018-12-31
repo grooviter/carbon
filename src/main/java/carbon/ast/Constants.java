@@ -37,7 +37,7 @@ public class Constants {
      *
      * @since 0.1.0
      */
-    static final String DEFAULT_USAGE_DESC = "It would be nice to know how to use this script right ? Shame on you!";
+    static final String DEFAULT_USAGE_DESC = "Still no description";
 
     /**
      * @since 0.1.0
