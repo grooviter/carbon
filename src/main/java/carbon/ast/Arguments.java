@@ -18,7 +18,7 @@ class Arguments {
 
     public static Argument DEFAULT_ARGUMENT_HELP = new Argument(
             "help",
-            "command help",
+            "Shows help",
             false,
             null,
             null,

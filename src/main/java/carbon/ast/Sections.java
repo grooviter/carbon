@@ -89,7 +89,7 @@ class Sections {
 
         String headerHeading = findParam(parts,
                 "headerHeading",
-                "%n@|bold,underline Name|@:%n");
+                "%n@|bold,underline NAME|@:%n");
 
         String header = findParam(parts,
                 "header",
@@ -97,11 +97,11 @@ class Sections {
 
         String synopsisHeading = findParam(parts,
                 "synopsisHeading",
-                "@|bold,underline Usage|@: ");
+                "@|bold,underline USAGE|@:%n");
 
         String descriptionHeading = findParam(parts,
                 "descriptionHeading",
-                "%n@|bold,underline Description|@:%n");
+                "%n@|bold,underline DESCRIPTION|@:%n");
 
         String description = findParam(parts,
                 "description",
@@ -109,7 +109,7 @@ class Sections {
 
         String footerHeading = findParam(parts,
                 "footerHeading",
-                "%n@|bold,underline Version|@:%n");
+                "%n@|bold,underline VERSION|@:%n");
 
         String footer = findParam(parts,
                 "footer",
@@ -117,7 +117,7 @@ class Sections {
 
         String optionListHeading = findParam(parts,
                 "optionListHeading",
-                "%n@|bold,underline Options|@:%n");
+                "%n@|bold,underline OPTIONS|@:%n");
 
         return Usage
             .newUsage()
