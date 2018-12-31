@@ -35,11 +35,7 @@ public class Ast {
      * @since 0.1.0
      */
     static Statement newBuilderS(String name, Usage usage) {
-        MapExpression usageMapX = mapX(
-                mapEntryX(constX("name"), constX(name)),
-                mapEntryX(constX(DEFAULT_USAGE_NAME), constX(usage.getDescription()))
-        );
-
+        MapExpression usageMapX = mapX(mapEntryX(constX("name"), constX(name)));
         DeclarationExpression declarationX = varDeclarationX(
                 CLI_BUILDER_NAME,
                 CliBuilder.class,

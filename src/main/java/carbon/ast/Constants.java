@@ -26,7 +26,7 @@ public class Constants {
      */
     public static final String DEFAULT_USAGE_NAME = "usage";
 
-    public static final String DEFAULT_ARGS_DESCRIPTION = "desc";
+    public static final String DEFAULT_ARGS_DESCRIPTION = "description";
 
     public static final String DEFAULT_ARGS_PARAM_MANDATORY = "mandatory";
 

@@ -76,13 +76,14 @@ class Sections {
 
     private static Usage extractUsage(List<StatementUtils.Group> groups, MetaInfo metaInfo) {
         Optional<Section> section = findSection("usage", groups);
+        Optional<Section> taskDescription = findSection("description", groups);
 
         List<MapEntryExpression> parts = section
             .map(Section::getMapExpression)
             .map(MapExpression::getMapEntryExpressions)
             .orElse(emptyList());
 
-        String descriptionDefaults = section
+        String descriptionDefaults = taskDescription
             .map(Section::getDescription)
             .orElse(Constants.DEFAULT_USAGE_DESC);
 
