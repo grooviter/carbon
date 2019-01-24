@@ -8,6 +8,7 @@ buildscript {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'codenarc'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
@@ -29,6 +30,15 @@ dependencies {
 
     testCompile "com.h2database:h2:$h2"
     testCompile "org.spockframework:spock-core:$spock_core"
+    testCompile("com.github.grooviter:asteroid:$asteroid") {
+        exclude module: "groovy-all"
+        exclude module: "groovy"
+    }
+}
+
+codenarc {
+    configFile file('src/main/codenarc/config.groovy')
+    toolVersion "1.2"
 }
 
 publishing {
