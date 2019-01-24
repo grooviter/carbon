@@ -7,12 +7,13 @@ import spock.lang.Specification
  *
  * @since 0.1.0
  */
+@SuppressWarnings('VariableTypeRequired')
 class ConfiguredCliSpec extends Specification {
 
     void 'test create table with default key'() {
         given: 'a configured Sql object'
-        def path = "src/test/resources/carbon/sql.yaml"
-        def sql = Cli.withConfig(path).sql()
+        def path = 'src/test/resources/carbon/sql.yaml'
+        def sql = Cli.withConfig(path).sql().connection
 
         when: 'creating a new table'
         sql.execute '''
@@ -26,10 +27,10 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with default key failure'() {
         given: 'a configured Sql object'
-        def path = "src/test/resources/carbon/sql-empty.yaml"
+        def path = 'src/test/resources/carbon/sql-empty.yaml'
 
         when: 'creating a new table'
-        Cli.withConfig(path).sql()
+        Cli.withConfig(path).sql().connection
 
         then: 'no exception should be thrown'
         thrown(AssertionError)
@@ -37,8 +38,8 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with custom key sucessfully'() {
         given: 'a configured Sql object'
-        def path = "src/test/resources/carbon/sql.yaml"
-        def sql = Cli.withConfig(path).sql('sql2')
+        def path = 'src/test/resources/carbon/sql.yaml'
+        def sql = Cli.withConfig(path).sql().getConnection('sql2')
 
         when: 'creating a new table'
         sql.execute '''
@@ -52,10 +53,10 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with custom key failure'() {
         given: 'a configured Sql object'
-        def path = "src/test/resources/carbon/sql.yaml"
+        def path = 'src/test/resources/carbon/sql.yaml'
 
         when: 'creating a new table'
-        Cli.withConfig(path).sql('sql3')
+        Cli.withConfig(path).sql().getConnection('sql3')
 
         then: 'no exception should be thrown'
         thrown(AssertionError)

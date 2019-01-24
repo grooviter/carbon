@@ -1,11 +1,12 @@
 package carbon
 
-import groovy.sql.Sql
 import groovy.transform.TupleConstructor
 import carbon.zip.ZipCli
+import carbon.sql.SqlCli
 import carbon.log.LoggerCli
 
 /**
+ * Represents the entry point to a set of general utilities
  *
  * @since 0.1.0
  */
@@ -15,41 +16,19 @@ class ConfiguredCli {
     Map config
 
     /**
-     * Returns a configured instance of type {@link Sql} with configuration
-     * under 'sql' key
+     * Returns a {@link SqlCli} instance to handle SQL connections
      *
-     * @return an instance of {@link Sql} with the settings found
-     * in the configuration
-     * @since 0.1.0
+     * @return a {@link SqlCli} instance
+     * @since 0.1.5
      */
-    Sql sql() {
-        return sql('sql')
+    SqlCli sql() {
+        return new SqlCli(config)
     }
 
     /**
-     * Returns a configured instance of type {@link Sql} with configuration
-     * under the key specified
+     * Returns a {@link ZipCli} instance to handle zip files
      *
-     * @param key configuration key to find sql settings
-     * @return a configured instance of type {@link Sql}
-     * @since 0.1.0
-     */
-    Sql sql(final String key) {
-        Map sqlConfig = config?.get(key)
-        String driverClass = sqlConfig?.driverClass
-        String url = sqlConfig?.url
-        String username = sqlConfig?.username
-        String password = sqlConfig?.password
-
-        assert sqlConfig, "No SQL configuration found with key -- $key --"
-        assert driverClass, "No SQL driverClass property found"
-        assert url, "No SQL url property found"
-
-        return Sql.newInstance(url, username, password, driverClass)
-    }
-
-    /**
-     * @return
+     * @return a {@link ZipCli} instance
      * @since 0.1.0
      */
     ZipCli zip() {
@@ -57,11 +36,12 @@ class ConfiguredCli {
     }
 
     /**
+     * Returns a {@link LoggerCli} instance to handle console log
      *
-     * @return
+     * @return a {@link LoggerCli} instance
      * @since 0.1.4
      */
-    LoggerCli logger() {
+    LoggerCli log() {
         return new LoggerCli()
     }
 }

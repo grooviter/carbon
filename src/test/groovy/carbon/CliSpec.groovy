@@ -8,12 +8,12 @@ import spock.lang.Specification
  * @since 0.1.0
  */
 class CliSpec extends Specification {
-    def "load configuration"() {
+    void "load configuration"() {
         setup: 'test sql configuration path'
-        def configPath = "src/test/resources/carbon/sql.yaml"
+        String configPath = 'src/test/resources/carbon/sql.yaml'
 
         when: 'asking for the configuration'
-        def result = Cli.withConfig(configPath).config
+        Map<String,?> result = Cli.withConfig(configPath).config
 
         then: 'checking sql settings'
         with(result.sql) {

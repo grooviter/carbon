@@ -3,15 +3,17 @@ package carbon.zip
 import org.zeroturnaround.zip.ZipUtil
 
 /**
- *
+ * Utility class to zip files
  *
  * @since 0.1.0
  */
 class ZipCli {
 
     /**
-     * @param path
-     * @param zipFile
+     * Creates a zip file with the directory passed as argument
+     *
+     * @param path path to zip
+     * @param zipFile the target zip file
      * @since 0.1.0
      */
     void zip(final String path, final String zipFile) {
@@ -19,8 +21,10 @@ class ZipCli {
     }
 
     /**
-     * @param path
-     * @param destination
+     * Unzips the path passed as argument to the destination file
+     *
+     * @param path path to unzip
+     * @param destination target destination
      * @since 0.1.0
      */
     void unzip(final String path, final String destination) {
