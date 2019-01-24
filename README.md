@@ -4,12 +4,14 @@
 
 Carbon is a set of utilities to make it easier to develop http://www.groovy-lang.org scripts.
 
+**IMPORTANT**: Carbon is still at alpha state.
+
 ## How to use it ?
 
 ```Groovy
 #!/usr/bin/env groovy
 
-@Grab('com.github.grooviter:carbon:0.1.5')
+@Grab('com.github.grooviter:carbon:0.1.6')
 import carbon.Cli
 
 name: "hello-world"
@@ -24,8 +26,8 @@ hello-word --name John
 params: [
     user: [
         type: String,
-        description: 'Your name',
-        mandatory: true
+        mandatory: true,
+        description: 'Your name'
     ]
 ]
 
@@ -76,4 +78,4 @@ In order to use `Carbon` in your Groovy code you can find it in Bintray or Maven
 
 Then you can add the dependency to your project:
 
-    compile com.github.grooviter:carbon:0.1.5'
+    compile com.github.grooviter:carbon:0.1.6'
