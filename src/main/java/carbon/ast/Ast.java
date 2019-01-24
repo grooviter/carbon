@@ -52,7 +52,7 @@ public class Ast {
      * @return a {@link Statement} with an expression parsing the script strategies
      * @since 0.1.0
      */
-    static Statement parseArgsStmt(ClassNode scriptClassNode) {
+    static Statement parseArgsStmt() {
         VariableExpression cliVarX = varX(
                 CLI_BUILDER_NAME,
                 A.NODES.clazz(CliBuilder.class.getName()).build());
@@ -96,7 +96,7 @@ public class Ast {
     }
 
     private static Statement getUsageMessageX(String method, String value) {
-        MethodCallExpression usageMessageX = callX(varX("cli"), "getUsageMessage");
+        MethodCallExpression usageMessageX = callX(varX(Constants.CLI_BUILDER_NAME), "getUsageMessage");
 
         return stmt(callX(usageMessageX, method, constX(value)));
     }
@@ -116,7 +116,7 @@ public class Ast {
     static Statement usageStmt() {
         IfStatement ifNotParams =  ifS(boolX(notX(varX("params"))), emptyReturnStmt());
 
-        MethodCallExpression cliUsage = callX(varX("cli"), "usage");
+        MethodCallExpression cliUsage = callX(varX(Constants.CLI_BUILDER_NAME), "usage");
         List<Statement> stmtList = Arrays.asList(stmt(cliUsage), emptyReturnStmt());
         IfStatement ifParamsHelp = ifS(boolX(propX(varX("params"), constX("help"))), blockS(stmtList));
 

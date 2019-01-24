@@ -17,7 +17,7 @@ public class Constants {
      *
      * @since 0.1.0
      */
-    static final String CLI_BUILDER_NAME = "cli";
+    static final String CLI_BUILDER_NAME = "cli_pqowie";
 
     /**
      * Default script"s usage name

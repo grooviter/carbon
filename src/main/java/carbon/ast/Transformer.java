@@ -7,10 +7,12 @@ import asteroid.utils.StatementUtils;
 import carbon.ast.model.Argument;
 import carbon.ast.model.Task;
 import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.ast.VariableScope;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.control.SourceUnit;
-
+import org.codehaus.groovy.classgen.VariableScopeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +44,7 @@ public class Transformer extends AbstractMethodNodeTransformer {
         Task task = Sections.createTaskFrom(groups);
 
         Statement newCliStmt = Ast.newBuilderS(task.getMetaInfo().getName(), task.getUsage());
-        Statement parseArgsStmt = Ast.parseArgsStmt(methodNode.getDeclaringClass());
+        Statement parseArgsStmt = Ast.parseArgsStmt();
         Statement usageMessageStmt = Ast.usageMessageConfigurationStmt(task.getUsage());
         Statement ifHelpStmt = Ast.usageStmt();
         List<Statement> allCases = createScriptOptions(task.getArguments());
@@ -56,10 +58,9 @@ public class Transformer extends AbstractMethodNodeTransformer {
         statements.addAll(task.getStatements());
 
         methodNode.setCode(blockS(statements));
-    }
 
-    private static MethodCallExpression printlnX(String message) {
-        return Expressions.callThisX("println", Expressions.constX(message));
+        VariableScopeVisitor scopeVisitor = new VariableScopeVisitor(this.getSourceUnit());
+		scopeVisitor.visitClass(methodNode.getDeclaringClass());
     }
 
     private List<Statement> createScriptOptions(final List<Argument> arguments) {
