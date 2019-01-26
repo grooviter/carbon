@@ -15,6 +15,6 @@ import org.codehaus.groovy.control.CompilePhase
 class CarbonASTTransformation extends AbstractGlobalTransformation {
     @Override
     List<Class<Transformer>> getTransformers() {
-        return [carbon.ast.Transformer]
+        return [carbon.ast.MethodTransformer]
     }
 }

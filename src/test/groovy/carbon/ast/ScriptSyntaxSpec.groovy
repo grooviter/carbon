@@ -13,11 +13,12 @@ class ScriptSyntaxSpec extends CarbonSpec {
     void "check basic blocks to be valid"() {
         expect: 'basic blocks to pass syntax validation'
         evaluateScript '''
-           name: "carbon-example"
-           version: "0.1.0"
-           author: "@marioggar"
-           desc: "Sample Carbon script"
-           script:
+           carbon = [
+             name: "carbon-example",
+             version: "0.1.0",
+             author: "@marioggar",
+             desc: "Sample Carbon script",
+           ]
 
            println "Hello World"
         '''
@@ -26,14 +27,15 @@ class ScriptSyntaxSpec extends CarbonSpec {
     void "check params to be valid"() {
         expect: 'basic blocks to pass syntax validation'
         evaluateScript '''
-           name: "carbon-example"
-           version: "0.1.0"
-           author: "@marioggar"
-           desc: "Sample Carbon script"
-           params: [
-             name: [type: String, mandatory: true]
+           carbon = [
+             name: "carbon-example",
+             version: "0.1.0",
+             author: "@marioggar",
+             desc: "Sample Carbon script",
+             params: [
+               name: [type: String, mandatory: true]
+             ],
            ]
-           script:
 
            println "Hello ${params.name}"
         '''
@@ -44,14 +46,15 @@ class ScriptSyntaxSpec extends CarbonSpec {
         evaluateScript '''
            import carbon.Cli
 
-           name: "carbon-example"
-           version: "0.1.0"
-           author: "@marioggar"
-           desc: "Sample Carbon script"
-           params: [
-             name: [type: String, mandatory: true]
+           carbon = [
+             name: "carbon-example",
+             version: "0.1.0",
+             author: "@marioggear",
+             desc: "Sample Carbon script",
+             params: [
+               name: [type: String, mandatory: true]
+             ],
            ]
-           script:
 
            Cli.withConfig().logger.logln  "Hello ${params.name}"
         '''

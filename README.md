@@ -9,32 +9,29 @@ Carbon is a set of utilities to make it easier to develop http://www.groovy-lang
 ## How to use it ?
 
 ```Groovy
-#!/usr/bin/env groovy
+#!/usr/bin/env carbon
 
-@Grab('com.github.grooviter:carbon:0.1.6')
-import carbon.Cli
-
-name: "hello-world"
-version: "1.0.0"
-description:
-"""This script says @|yellow hello |@ to the name
+name: 'hello-world'
+version: '1.0.0'
+configuration: '$HOME/db.yaml'
+description: '''
+This script says @|yellow hello |@ to the name
 passed as parameter:
 
 hello-word --name John
-"""
+'''
 
 params: [
-    user: [
-        type: String,
-        mandatory: true,
-        description: 'Your name'
-    ]
+    user: [type: String, mandatory: true, description: 'Your name']
 ]
 
 script:
-Cli.withConfig()
-    .logger()
-    .logln("Hello ${params.user}")
+
+List<Double> rows = sql
+    .rows(config.db.query, params.user)
+    .collect(onlyLatest)
+
+log.info "There're ${rows.size()} stocks for user ${params.user}"
 
 ```
 
