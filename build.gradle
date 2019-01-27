@@ -22,7 +22,6 @@ dependencies {
         exclude module: "groovy"
     }
     compile "org.codehaus.groovy:groovy:$groovy_all"
-    compile "org.codehaus.groovy:groovy-macro:$groovy_all"
     compile "org.codehaus.groovy:groovy-sql:$groovy_all"
     compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
     compile "org.fusesource.jansi:jansi:$jansiVersion"

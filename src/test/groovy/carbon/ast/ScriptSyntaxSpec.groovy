@@ -14,7 +14,7 @@ class ScriptSyntaxSpec extends CarbonSpec {
         expect: 'basic blocks to pass syntax validation'
         evaluateScript '''
            carbon = [
-             name: "carbon-example",
+             name: "carbon-example-1",
              version: "0.1.0",
              author: "@marioggar",
              desc: "Sample Carbon script",
@@ -28,7 +28,7 @@ class ScriptSyntaxSpec extends CarbonSpec {
         expect: 'basic blocks to pass syntax validation'
         evaluateScript '''
            carbon = [
-             name: "carbon-example",
+             name: "carbon-example-2",
              version: "0.1.0",
              author: "@marioggar",
              desc: "Sample Carbon script",
@@ -47,7 +47,7 @@ class ScriptSyntaxSpec extends CarbonSpec {
            import carbon.Cli
 
            carbon = [
-             name: "carbon-example",
+             name: "carbon-example-3",
              version: "0.1.0",
              author: "@marioggear",
              desc: "Sample Carbon script",

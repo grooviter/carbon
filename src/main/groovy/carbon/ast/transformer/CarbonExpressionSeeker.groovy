@@ -1,31 +1,18 @@
-package carbon.ast
+package carbon.ast.transformer
 
-import asteroid.A
-import asteroid.Criterias
-import asteroid.Expressions
-import asteroid.transformer.AbstractMethodNodeTransformer
-import asteroid.utils.StatementUtils
-import carbon.ast.model.Argument
-import carbon.ast.model.Task
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.ast.Variable
-import org.codehaus.groovy.ast.VariableScope
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
-import org.codehaus.groovy.ast.expr.*
-import org.codehaus.groovy.ast.stmt.Statement
-import org.codehaus.groovy.ast.stmt.BlockStatement
+import org.codehaus.groovy.ast.expr.Expression
+import org.codehaus.groovy.ast.expr.BinaryExpression
+import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.control.SourceUnit
-import org.codehaus.groovy.classgen.VariableScopeVisitor
-import org.codehaus.groovy.syntax.Types
-import org.codehaus.groovy.macro.matcher.ASTMatcher
-import static asteroid.Statements.blockS
 
 /**
  * @since 0.2.0
  */
 @CompileStatic
-static class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
+class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
 
     /**
      * @since 0.2.0
@@ -49,9 +36,16 @@ static class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
         this.sourceUnit = sourceUnit
     }
 
+    Expression find(MethodNode methodNode) {
+        methodNode.code.visit(this)
+
+        return this.found?.rightExpression
+    }
+
     @Override
+    @SuppressWarnings('Instanceof')
     Expression transform(Expression expr) {
-        if (expr && expr instanceof BinaryExpression && expr.leftExpression instanceof VariableExpression) {
+        if (expr instanceof BinaryExpression && expr.leftExpression instanceof VariableExpression) {
             VariableExpression leftX = (VariableExpression) expr.leftExpression
             if (leftX && leftX.name == VARIABLE_NAME) {
                 this.found = expr
