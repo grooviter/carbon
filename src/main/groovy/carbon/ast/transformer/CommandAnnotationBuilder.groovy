@@ -16,9 +16,9 @@ class CommandAnnotationBuilder {
     /**
      * @since 0.2.0
      */
-    static final VALID_PROPERTIES = [
+    static final List<String> VALID_PROPERTIES = [
         'version',
-        'description'
+        'description',
     ]
 
     /**
