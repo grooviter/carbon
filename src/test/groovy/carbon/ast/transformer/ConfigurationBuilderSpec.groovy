@@ -12,7 +12,7 @@ import asteroid.Expressions as X
  */
 class ConfigurationBuilderSpec extends Specification {
 
-    void 'build configuration from MapEntryExpression'() {
+    void 'Carbon\'s configuration from a MapEntryExpression'() {
         given: 'a carbon expression'
         MapExpression mapX = X.mapX(
             X.mapEntryX(X.constX('name'), X.constX('simple-script')),
@@ -34,7 +34,7 @@ class ConfigurationBuilderSpec extends Specification {
         }
     }
 
-    void 'build configuration from string path'() {
+    void 'Carbon\'s configuration from a string path'() {
         given: 'a carbon expression value'
         ConstantExpression pathX = X.constX('src/test/resources/carbon/sql.yaml')
 

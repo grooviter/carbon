@@ -1,5 +1,6 @@
 package carbon.ast.transformer
 
+import asteroid.A
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ClassCodeExpressionTransformer
@@ -12,7 +13,7 @@ import org.codehaus.groovy.control.SourceUnit
  * @since 0.2.0
  */
 @CompileStatic
-class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
+class ExpressionFinder extends ClassCodeExpressionTransformer {
 
     /**
      * @since 0.2.0
@@ -32,7 +33,7 @@ class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
     /**
      * @since 0.2.0
      */
-    CarbonExpressionSeeker(SourceUnit sourceUnit) {
+    ExpressionFinder(SourceUnit sourceUnit) {
         this.sourceUnit = sourceUnit
     }
 
@@ -49,6 +50,7 @@ class CarbonExpressionSeeker extends ClassCodeExpressionTransformer {
             VariableExpression leftX = (VariableExpression) expr.leftExpression
             if (leftX && leftX.name == VARIABLE_NAME) {
                 this.found = expr
+                return A.EXPR.constX(null)
             }
         }
 

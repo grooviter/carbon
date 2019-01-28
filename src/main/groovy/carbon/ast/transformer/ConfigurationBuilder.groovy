@@ -6,6 +6,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MapEntryExpression
 import groovy.transform.TailRecursive
+import groovy.transform.TupleConstructor
 import org.yaml.snakeyaml.Yaml
 
 /**
@@ -14,17 +15,19 @@ import org.yaml.snakeyaml.Yaml
  *
  * @since 0.2.0
  */
+@TupleConstructor
 class ConfigurationBuilder {
+
+    Expression expr
 
     /**
      * From the expression value found, a configuration map will be
      * built
      *
-     * @param expr {@link Expression} containing the carbon expression value
      * @return a map containing the configuration values
      * @since 0.2.0
      */
-    Map<String,?> build(Expression expr) {
+    Map<String,?> build() {
         switch (expr) {
             case MapExpression:
                 List<MapEntryExpression> mapEntryXList = ((MapExpression)expr).mapEntryExpressions
@@ -34,7 +37,7 @@ class ConfigurationBuilder {
                 return buildFromString(constX)
 
             default:
-                throw new IllegalStateException('Carbon configuration can be only either a map or a string')
+                return [:]// throw new IllegalStateException('Carbon configuration can be only either a map or a string')
         }
     }
 
@@ -59,7 +62,7 @@ class ConfigurationBuilder {
     }
 
     private Object resolveEntryValue(ClassExpression entry) {
-        return ClassLoader.loadClass(entry.type.name)
+        return entry.type.typeClass
     }
 
     private Object resolveEntryValue(MapExpression entry) {
@@ -68,7 +71,8 @@ class ConfigurationBuilder {
 
     @SuppressWarnings('UnusedPrivateMethodParameter')
     private Object resolveEntryValue(Expression entry) {
-        throw new IllegalStateException('Carbon entry can be only constant, class, or a map')
+        println("WARNING: Carbon entry of type ${entry.class} can't be processed")
+        return null
     }
 
     private Map<String,?> buildFromString(ConstantExpression constX) {
