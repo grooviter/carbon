@@ -30,9 +30,9 @@ class PicocliParamsBuilder {
     Map<String,?> carbonConfig
 
     void build() {
-        Map<String, ?> params = carbonConfig.params as Map<String,?>
+        Map<String, ?> parameters = carbonConfig.params as Map<String,?>
 
-        params
+        parameters
             .entrySet()
             .stream()
             .map(this.&toParamField)
