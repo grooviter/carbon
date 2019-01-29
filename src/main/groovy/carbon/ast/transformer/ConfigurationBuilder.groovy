@@ -18,6 +18,11 @@ import org.yaml.snakeyaml.Yaml
 @TupleConstructor
 class ConfigurationBuilder {
 
+    static final Map<String,?> DEFAULT = [
+        params: [:],
+        options: [:]
+    ]
+
     Expression expr
 
     /**
@@ -31,7 +36,7 @@ class ConfigurationBuilder {
         switch (expr) {
             case MapExpression:
                 List<MapEntryExpression> mapEntryXList = ((MapExpression)expr).mapEntryExpressions
-                return buildFromMap(mapEntryXList)
+                return buildFromMap(mapEntryXList, DEFAULT)
             case ConstantExpression:
                 ConstantExpression constX = expr as ConstantExpression
                 return buildFromString(constX)
