@@ -1,57 +1,57 @@
 package carbon.ast.transformer
 
-import groovy.transform.TupleConstructor
 import asteroid.A
-import asteroid.Criterias
 import asteroid.nodes.AnnotationNodeBuilder
 import picocli.CommandLine
-import picocli.groovy.PicocliScript
-import picocli.groovy.PicocliBaseScript
-import asteroid.transformer.AbstractMethodNodeTransformer
-import groovy.transform.Field
 import groovy.transform.Generated
-import groovy.transform.CompileStatic
-import org.codehaus.groovy.ast.Parameter
-import org.codehaus.groovy.ast.ClassNode
+import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.AnnotationNode
-import org.codehaus.groovy.ast.ConstructorNode
-import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ListExpression
-import org.codehaus.groovy.ast.expr.DeclarationExpression
-import org.codehaus.groovy.ast.expr.ConstantExpression
-import org.codehaus.groovy.ast.stmt.BlockStatement
-import org.codehaus.groovy.control.SourceUnit
-import org.codehaus.groovy.classgen.VariableScopeVisitor
 
 /**
+ * Builds Picocli options from the Carbon's configuration found in the
+ * script.
+ *
  * @since 0.2.0
  */
 @TupleConstructor
+@SuppressWarnings('FactoryMethodName')
 class PicocliOptsBuilder {
 
     /**
+     * Even before processing any option property found, Carbon could
+     * provide sane defaults for these properties.
+     *
      * @since 0.2.0
      */
-    static final Map<String, ?> OPT_MAPPERS = [
-        required: PicocliOptsBuilder.&required,
-    ]
-
-    /**
-     * @since 0.2.0
-     */
-    static final List<Closure<Void>> DEFAULTS = [
+    static final List<Closure> DEFAULTS = [
         PicocliOptsBuilder.&defaultNames,
     ]
 
     /**
+     * For every Picocli option property found there's a function to
+     * process the property's value
+     *
+     * @since 0.2.0
+     */
+    static final Map<String, Closure> OPT_MAPPERS = [
+        required:PicocliOptsBuilder.extractValue('required'),
+        description:PicocliOptsBuilder.extractValue('description'),
+    ]
+
+    /**
+     * Method containing script code
+     *
      * @since 0.2.0
      */
     MethodNode methodNode
 
     /**
+     * Carbon configuration
+     *
      * @since 0.2.0
      */
     Map<String,?> carbonConfig
@@ -59,19 +59,41 @@ class PicocliOptsBuilder {
     /**
      * @since 0.2.0
      */
+    @SuppressWarnings(['BuilderMethodWithSideEffects', 'Indentation'])
     void build() {
         Map<String, ?> options = carbonConfig.options as Map<String,?>
 
         options
             .entrySet()
             .stream()
-            .map(this.&toOptField)
-            .forEach({ FieldNode field ->
+            .map(PicocliOptsBuilder.&toOptField)
+            .forEach { FieldNode field ->
                 methodNode.declaringClass.addField(field)
-            })
+            }
     }
 
-    private FieldNode toOptField(Map.Entry<String,?> entry) {
+    private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
+        String optionName = entry.key
+        ListExpression optionNamesX = A.EXPR.listX(
+            A.EXPR.constX("--$optionName".toString()),
+            A.EXPR.constX("-${optionName[0]}".toString())
+        )
+
+        builder.member('names', optionNamesX)
+    }
+
+    private static Closure extractValue(String property) {
+        return { AnnotationNodeBuilder builder, Map.Entry<String,?> entry ->
+            Map<String,?> val = entry.value as Map<String,?>
+            Object propertyValue = val[property]
+
+            if (propertyValue) {
+                builder.member(property, A.EXPR.constX(propertyValue))
+            }
+        }
+    }
+
+    private static FieldNode toOptField(Map.Entry<String,?> entry) {
         FieldNode newField = createFieldNode(entry)
         AnnotationNodeBuilder builder = A.NODES.annotation(CommandLine.Option)
 
@@ -90,27 +112,9 @@ class PicocliOptsBuilder {
         return newField
     }
 
-    private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
-        String optionName = entry.key.toString()
-        ListExpression optionNamesX = A.EXPR.listX(
-            A.EXPR.constX("--$optionName".toString()),
-            A.EXPR.constX("-${optionName[0]}".toString())
-        )
-
-        builder.member('names', optionNamesX)
-    }
-
-    private static void required(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
+    private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
         Map<String,?> val = entry.value as Map<String,?>
-
-        if (val.required) {
-            builder.member('required', A.EXPR.constX(val.required))
-        }
-    }
-
-    private FieldNode createFieldNode(Map.Entry<String,?> entry) {
-        Map<String,?> val = entry.value as Map<String,?>
-        String optionName = entry.key.toString()
+        String optionName = entry.key
         Class clazz = val.type as Class
         Expression initialX = A.EXPR.constX(val.defaultValue) ?: null
 
@@ -123,7 +127,7 @@ class PicocliOptsBuilder {
         )
     }
 
-    private AnnotationNode getGeneratedAnnotation() {
+    private static AnnotationNode getGeneratedAnnotation() {
         return A.NODES.annotation(Generated).build()
     }
 }

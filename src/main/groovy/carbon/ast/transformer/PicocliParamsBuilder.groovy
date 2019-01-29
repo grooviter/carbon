@@ -1,34 +1,36 @@
 package carbon.ast.transformer
 
-import groovy.transform.TupleConstructor
 import asteroid.A
-import asteroid.Criterias
 import picocli.CommandLine
-import picocli.groovy.PicocliScript
-import picocli.groovy.PicocliBaseScript
-import asteroid.transformer.AbstractMethodNodeTransformer
-import groovy.transform.Field
 import groovy.transform.Generated
-import groovy.transform.CompileStatic
-import org.codehaus.groovy.ast.Parameter
+import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.AnnotationNode
-import org.codehaus.groovy.ast.ConstructorNode
-import org.codehaus.groovy.ast.ClassHelper
-import org.codehaus.groovy.ast.expr.Expression
-import org.codehaus.groovy.ast.expr.ListExpression
-import org.codehaus.groovy.ast.expr.DeclarationExpression
-import org.codehaus.groovy.ast.stmt.BlockStatement
-import org.codehaus.groovy.control.SourceUnit
-import org.codehaus.groovy.classgen.VariableScopeVisitor
 
+/**
+ * @since 0.2.0
+ */
 @TupleConstructor
 class PicocliParamsBuilder {
+
+    /**
+     * @since 0.2.0
+     */
+    static final String ARRAY_CLASS_PREFIX = '[L'
+
+    /**
+     * @since 0.2.0
+     */
     MethodNode methodNode
+
+    /**
+     * @since 0.2.0
+     */
     Map<String,?> carbonConfig
 
+    @SuppressWarnings('BuilderMethodWithSideEffects')
     void build() {
         Map<String, ?> parameters = carbonConfig.params as Map<String,?>
 
@@ -36,18 +38,18 @@ class PicocliParamsBuilder {
             .entrySet()
             .stream()
             .map(this.&toParamField)
-            .forEach({ FieldNode field -> methodNode.declaringClass.addField(field) })
+            .forEach { FieldNode field -> methodNode.declaringClass.addField(field) }
     }
 
     private FieldNode toParamField(Map.Entry<String,?> entry) {
         Map<String,?> val = entry.value as Map<String,?>
-        String optionName = entry.key.toString()
+        String optionName = entry.key
         ClassNode optionClass = A.NODES.clazz(val.type).build()
 
         String simple = optionClass.name
-        ClassNode clazzNode = simple.contains('[L')
-        ? A.NODES.clazz((simple - '[L') - ';').build().makeArray()
-        : A.NODES.clazz(simple).build()
+        ClassNode clazzNode = simple.contains(ARRAY_CLASS_PREFIX) ?
+            A.NODES.clazz((simple - ARRAY_CLASS_PREFIX) - ';').build().makeArray() :
+            A.NODES.clazz(simple).build()
 
         FieldNode newField = new FieldNode(
             optionName,

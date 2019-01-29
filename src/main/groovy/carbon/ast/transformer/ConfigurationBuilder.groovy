@@ -7,6 +7,7 @@ import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MapEntryExpression
 import groovy.transform.TailRecursive
 import groovy.transform.TupleConstructor
+import groovy.util.logging.Log
 import org.yaml.snakeyaml.Yaml
 
 /**
@@ -15,14 +16,21 @@ import org.yaml.snakeyaml.Yaml
  *
  * @since 0.2.0
  */
+@Log
 @TupleConstructor
 class ConfigurationBuilder {
 
+    /**
+     * @since 0.2.0
+     */
     static final Map<String,?> DEFAULT = [
-        params: [:],
-        options: [:]
+        params:[:],
+        options:[:],
     ]
 
+    /**
+     * @since 0.2.0
+     */
     Expression expr
 
     /**
@@ -42,7 +50,7 @@ class ConfigurationBuilder {
                 return buildFromString(constX)
 
             default:
-                return [:]// throw new IllegalStateException('Carbon configuration can be only either a map or a string')
+                return [:] // config should be only either a map or a string
         }
     }
 
@@ -76,7 +84,7 @@ class ConfigurationBuilder {
 
     @SuppressWarnings('UnusedPrivateMethodParameter')
     private Object resolveEntryValue(Expression entry) {
-        println("WARNING: Carbon entry of type ${entry.class} can't be processed")
+        log.info "WARNING: Carbon entry of type ${entry.class} can't be processed"
         return null
     }
 

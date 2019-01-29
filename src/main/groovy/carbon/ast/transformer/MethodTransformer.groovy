@@ -1,6 +1,5 @@
 package carbon.ast.transformer
 
-import asteroid.A
 import asteroid.Criterias
 import asteroid.transformer.AbstractMethodNodeTransformer
 import groovy.transform.CompileStatic
