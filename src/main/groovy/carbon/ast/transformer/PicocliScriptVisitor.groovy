@@ -11,25 +11,37 @@ import org.codehaus.groovy.ast.ConstructorNode
 import org.codehaus.groovy.ast.AnnotationNode
 
 /**
+ * Executes a series of tasks over the script class.
+ *
+ * <ul>
+ *   <li>Makes the Script to extend {@link PicocliBaseScript}</li>
+ *   <li>Moves the Script's run method to runScriptBody method</li>
+ *   <li>Removes the constructor with the binding context if super class doesn't have it</li>
+ *   <li>Adds Command annotation to Script</li>
+ * </ul>
+ *
  * @since 0.2.0
  */
 @TupleConstructor
 class PicocliScriptVisitor {
+
     /**
+     * {@link MethodNode} instance to apply the changes to
+     *
      * @since 0.2.0
      */
-    static final Parameter[] PARAMS = [
-        A.NODES
-            .param('context')
-            .type(ClassHelper.BINDING_TYPE)
-            .build(),
-    ] as Parameter[]
-
     MethodNode methodNode
 
+    /**
+     * Carbon configuration
+     *
+     * @since 0.2.0
+     */
     Map<String,?> carbonConfig
 
     /**
+     * Applies tasks to the Script's code
+     *
      * @since 0.2.0
      */
     void visit() {
@@ -59,9 +71,10 @@ class PicocliScriptVisitor {
     }
 
     private void removeBindingConstructorIfNeccessary(ClassNode classNode) {
+        Parameter[] parameter = [A.NODES.param('context').type(ClassHelper.BINDING_TYPE).build()]
         Boolean hasBindingCtor = classNode
             .superClass
-            .getDeclaredConstructor(PARAMS)
+            .getDeclaredConstructor(parameter)
 
         if (!hasBindingCtor) {
             ConstructorNode orphanedConstructor = classNode.getDeclaredConstructor(PARAMS)
