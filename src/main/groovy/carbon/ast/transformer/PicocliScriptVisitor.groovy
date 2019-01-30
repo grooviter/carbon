@@ -47,9 +47,16 @@ class PicocliScriptVisitor {
     void visit() {
         ClassNode declaringClass = methodNode.declaringClass
 
+        // Make script extend PicocliBaseScript
         addBaseClass(declaringClass)
+
+        // Move run method to runScriptBody
         moveRunMethod(methodNode)
+
+        // Remove binding constructor if necesssary
         removeBindingConstructorIfNeccessary(declaringClass)
+
+        // Add @Command annotation to script class
         addCommandAnnotation(declaringClass, carbonConfig)
     }
 
