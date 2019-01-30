@@ -27,8 +27,8 @@ class PicocliOptsBuilder {
      *
      * @since 0.2.0
      */
-    static final List<Closure> DEFAULTS = [
-        PicocliOptsBuilder.&defaultNames,
+    static final Map<String, Closure> DEFAULTS = [
+        names:PicocliOptsBuilder.&defaultNames,
     ]
 
     /**
@@ -97,12 +97,20 @@ class PicocliOptsBuilder {
         FieldNode newField = createFieldNode(entry)
         AnnotationNodeBuilder builder = A.NODES.annotation(CommandLine.Option)
 
-        DEFAULTS.each { d ->
-            d.call(builder, entry)
+        Map<String,?> values = entry.value
+        Set<String> defaults = diffKeys(DEFAULTS, values)
+        Set<String> processors = intersectKeys(OPT_MAPPERS, values)
+
+        defaults.each { String key ->
+            Closure func = DEFAULTS[key]
+
+            func.call(builder, entry)
         }
 
-        entry.value.entrySet().each { e ->
-            OPT_MAPPERS[e.key]?.call(builder, entry)
+        processors.each { String key ->
+            Closure func = OPT_MAPPERS[key]
+
+            func.call(builder, entry)
         }
 
         newField.addAnnotation(builder.build())
@@ -110,6 +118,14 @@ class PicocliOptsBuilder {
         newField.synthetic = true
 
         return newField
+    }
+
+    private static Set<String> diffKeys(Map<String,?> left, Map<String,?> right) {
+        return left.keySet() - right.keySet()
+    }
+
+    private static Set<String> intersectKeys(Map<String,?> left, Map<String,?> right) {
+        return left.keySet().intersect(right.keySet())
     }
 
     private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
