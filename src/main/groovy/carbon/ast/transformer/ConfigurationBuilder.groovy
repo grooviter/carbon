@@ -21,6 +21,8 @@ import org.yaml.snakeyaml.Yaml
 class ConfigurationBuilder {
 
     /**
+     * Default values
+     *
      * @since 0.2.0
      */
     static final Map<String,?> DEFAULT = [
@@ -29,6 +31,8 @@ class ConfigurationBuilder {
     ]
 
     /**
+     * {@link Expression} containing the Carbon configuration
+     *
      * @since 0.2.0
      */
     Expression expr
