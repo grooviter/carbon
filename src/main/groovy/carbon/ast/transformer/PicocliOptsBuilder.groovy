@@ -12,8 +12,8 @@ import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ListExpression
 
 /**
- * Builds Picocli options from the Carbon's configuration found in the
- * script.
+ * Builds Picocli's {@link CommandLine.Option} annotations and fields
+ * from the Carbon's configuration found in the script.
  *
  * @since 0.2.0
  */
