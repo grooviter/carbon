@@ -1,13 +1,13 @@
 package carbon.ast.transformer
 
+import carbon.ast.transformer.PicocliBuilderUtils as U
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
 import picocli.CommandLine
-import groovy.transform.Generated
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ListExpression
 
@@ -17,6 +17,7 @@ import org.codehaus.groovy.ast.expr.ListExpression
  *
  * @since 0.2.0
  */
+@CompileStatic
 @TupleConstructor
 @SuppressWarnings('FactoryMethodName')
 class PicocliOptsBuilder {
@@ -38,8 +39,8 @@ class PicocliOptsBuilder {
      * @since 0.2.0
      */
     static final Map<String, Closure> OPT_MAPPERS = [
-        required:PicocliOptsBuilder.extractValue('required'),
-        description:PicocliOptsBuilder.extractValue('description'),
+        required:U.extractValue('required'),
+        description:U.extractValue('description'),
     ]
 
     /**
@@ -66,10 +67,26 @@ class PicocliOptsBuilder {
         options
             .entrySet()
             .stream()
-            .map(PicocliOptsBuilder.&toOptField)
+            .map(PicocliOptsBuilder.toField(CommandLine.Option))
             .forEach { FieldNode field ->
                 methodNode.declaringClass.addField(field)
             }
+    }
+
+    private static Closure<FieldNode> toField(Class annotationType) {
+        return { Map.Entry<String,Map<String,?>> entry ->
+            FieldNode newField = createFieldNode(entry)
+            AnnotationNodeBuilder builder = A.NODES.annotation(annotationType)
+
+            U.applyX(U.diffByKeys(DEFAULTS, entry.value), builder, entry)
+            U.applyX(U.intersectByKeys(OPT_MAPPERS, entry.value), builder, entry)
+
+            newField.addAnnotation(builder.build())
+            newField.addAnnotation(U.generatedAnnotation)
+            newField.synthetic = true
+
+            return newField
+        }
     }
 
     private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
@@ -80,52 +97,6 @@ class PicocliOptsBuilder {
         )
 
         builder.member('names', optionNamesX)
-    }
-
-    private static Closure extractValue(String property) {
-        return { AnnotationNodeBuilder builder, Map.Entry<String,?> entry ->
-            Map<String,?> val = entry.value as Map<String,?>
-            Object propertyValue = val[property]
-
-            if (propertyValue) {
-                builder.member(property, A.EXPR.constX(propertyValue))
-            }
-        }
-    }
-
-    private static FieldNode toOptField(Map.Entry<String,?> entry) {
-        FieldNode newField = createFieldNode(entry)
-        AnnotationNodeBuilder builder = A.NODES.annotation(CommandLine.Option)
-
-        Map<String,?> values = entry.value
-        Set<String> defaults = diffKeys(DEFAULTS, values)
-        Set<String> processors = intersectKeys(OPT_MAPPERS, values)
-
-        defaults.each { String key ->
-            Closure func = DEFAULTS[key]
-
-            func.call(builder, entry)
-        }
-
-        processors.each { String key ->
-            Closure func = OPT_MAPPERS[key]
-
-            func.call(builder, entry)
-        }
-
-        newField.addAnnotation(builder.build())
-        newField.addAnnotation(generatedAnnotation)
-        newField.synthetic = true
-
-        return newField
-    }
-
-    private static Set<String> diffKeys(Map<String,?> left, Map<String,?> right) {
-        return left.keySet() - right.keySet()
-    }
-
-    private static Set<String> intersectKeys(Map<String,?> left, Map<String,?> right) {
-        return left.keySet().intersect(right.keySet())
     }
 
     private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
@@ -141,9 +112,5 @@ class PicocliOptsBuilder {
             null,
             initialX
         )
-    }
-
-    private static AnnotationNode getGeneratedAnnotation() {
-        return A.NODES.annotation(Generated).build()
     }
 }
