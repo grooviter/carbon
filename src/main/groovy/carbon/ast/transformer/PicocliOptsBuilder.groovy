@@ -67,26 +67,39 @@ class PicocliOptsBuilder {
         options
             .entrySet()
             .stream()
-            .map(PicocliOptsBuilder.toField(CommandLine.Option))
+            .map(PicocliOptsBuilder.&toField)
             .forEach { FieldNode field ->
                 methodNode.declaringClass.addField(field)
             }
     }
 
-    private static Closure<FieldNode> toField(Class annotationType) {
-        return { Map.Entry<String,Map<String,?>> entry ->
-            FieldNode newField = createFieldNode(entry)
-            AnnotationNodeBuilder builder = A.NODES.annotation(annotationType)
+    private static FieldNode toField(Map.Entry<String,Map<String,?>> entry) {
+        FieldNode newField = createFieldNode(entry)
+        AnnotationNodeBuilder builder = A.NODES.annotation(CommandLine.Option)
 
-            U.applyX(U.diffByKeys(DEFAULTS, entry.value), builder, entry)
-            U.applyX(U.intersectByKeys(OPT_MAPPERS, entry.value), builder, entry)
+        U.applyX(U.diffByKeys(DEFAULTS, entry.value), builder, entry)
+        U.applyX(U.intersectByKeys(OPT_MAPPERS, entry.value), builder, entry)
 
-            newField.addAnnotation(builder.build())
-            newField.addAnnotation(U.generatedAnnotation)
-            newField.synthetic = true
+        newField.addAnnotation(builder.build())
+        newField.addAnnotation(U.generatedAnnotation)
+        newField.synthetic = true
 
-            return newField
-        }
+        return newField
+    }
+
+    private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
+        Map<String,?> val = entry.value as Map<String,?>
+        String optionName = entry.key
+        Class clazz = val.type as Class
+        Expression initialX = A.EXPR.constX(val.defaultValue)
+
+        return new FieldNode(
+            optionName,
+            FieldNode.ACC_PUBLIC,
+            A.NODES.clazz(clazz).build(),
+            null,
+            initialX
+        )
     }
 
     private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
@@ -97,20 +110,5 @@ class PicocliOptsBuilder {
         )
 
         builder.member('names', optionNamesX)
-    }
-
-    private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
-        Map<String,?> val = entry.value as Map<String,?>
-        String optionName = entry.key
-        Class clazz = val.type as Class
-        Expression initialX = A.EXPR.constX(val.defaultValue) ?: null
-
-        return new FieldNode(
-            optionName,
-            FieldNode.ACC_PUBLIC,
-            A.NODES.clazz(clazz).build(),
-            null,
-            initialX
-        )
     }
 }
