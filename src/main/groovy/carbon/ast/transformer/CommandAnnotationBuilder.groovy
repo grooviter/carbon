@@ -8,12 +8,16 @@ import org.codehaus.groovy.ast.AnnotationNode
 import groovy.transform.TupleConstructor
 
 /**
+ * Builds a {@link Command} annotation
+ *
  * @since 0.2.0
  */
 @TupleConstructor
 class CommandAnnotationBuilder {
 
     /**
+     * Allowed properties to be used when building the annotation
+     *
      * @since 0.2.0
      */
     static final List<String> VALID_PROPERTIES = [
@@ -22,12 +26,17 @@ class CommandAnnotationBuilder {
     ]
 
     /**
+     * Carbon configuration
+     *
      * @since 0.2.0
      */
     Map<String,?> config
 
     /**
-     * @return
+     * Returns a configured {@link AnnotationNode} representing an
+     * annotation of type {@link Command}
+     *
+     * @return an instance of {@link AnnotationNode}
      * @since 0.2.0
      */
     AnnotationNode build() {
