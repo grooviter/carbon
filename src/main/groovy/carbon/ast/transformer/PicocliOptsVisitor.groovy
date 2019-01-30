@@ -1,6 +1,6 @@
 package carbon.ast.transformer
 
-import carbon.ast.transformer.PicocliBuilderUtils as U
+import carbon.ast.transformer.PicocliVisitorUtils as U
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
 import picocli.CommandLine
@@ -19,8 +19,7 @@ import org.codehaus.groovy.ast.expr.ListExpression
  */
 @CompileStatic
 @TupleConstructor
-@SuppressWarnings('FactoryMethodName')
-class PicocliOptsBuilder {
+class PicocliOptsVisitor {
 
     /**
      * Even before processing any option property found, Carbon could
@@ -29,7 +28,7 @@ class PicocliOptsBuilder {
      * @since 0.2.0
      */
     static final Map<String, Closure> DEFAULTS = [
-        names:PicocliOptsBuilder.&defaultNames,
+        names:PicocliOptsVisitor.&defaultNames,
     ]
 
     /**
@@ -60,21 +59,21 @@ class PicocliOptsBuilder {
     /**
      * @since 0.2.0
      */
-    @SuppressWarnings(['BuilderMethodWithSideEffects', 'Indentation'])
-    void build() {
+    @SuppressWarnings('Indentation')
+    void visit() {
         Map<String, ?> options = carbonConfig.options as Map<String,?>
 
         options
             .entrySet()
             .stream()
-            .map(PicocliOptsBuilder.&toField)
+            .map(PicocliOptsVisitor.&toField)
             .forEach { FieldNode field ->
                 methodNode.declaringClass.addField(field)
             }
     }
 
     private static FieldNode toField(Map.Entry<String,Map<String,?>> entry) {
-        FieldNode newField = createFieldNode(entry)
+        FieldNode newField = makeFieldNode(entry)
         AnnotationNodeBuilder builder = A.NODES.annotation(CommandLine.Option)
 
         U.applyX(U.diffByKeys(DEFAULTS, entry.value), builder, entry)
@@ -87,7 +86,7 @@ class PicocliOptsBuilder {
         return newField
     }
 
-    private static FieldNode createFieldNode(Map.Entry<String,?> entry) {
+    private static FieldNode makeFieldNode(Map.Entry<String,?> entry) {
         Map<String,?> val = entry.value as Map<String,?>
         String optionName = entry.key
         Class clazz = val.type as Class

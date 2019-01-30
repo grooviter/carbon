@@ -40,13 +40,13 @@ class MethodTransformer extends AbstractMethodNodeTransformer {
         }
 
         // Picocli opts
-        new PicocliOptsBuilder(methodNode, carbonConfig).build()
+        new PicocliOptsVisitor(methodNode, carbonConfig).visit()
 
         // Picocli params
-        new PicocliParamsBuilder(methodNode, carbonConfig).build()
+        new PicocliParamsVisitor(methodNode, carbonConfig).visit()
 
         // Picocli script
-        new PicocliScriptBuilder(methodNode, carbonConfig).build()
+        new PicocliScriptVisitor(methodNode, carbonConfig).visit()
 
         // Cleaning up
         visitAndResetVariableScopes(methodNode, this.sourceUnit)

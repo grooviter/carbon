@@ -12,7 +12,7 @@ import org.codehaus.groovy.ast.AnnotationNode
  * @since 0.2.0
  */
 @CompileStatic
-class PicocliBuilderUtils {
+class PicocliVisitorUtils {
 
     /**
      * Apply processors to the entry (option or param) properties in

@@ -14,7 +14,7 @@ import org.codehaus.groovy.ast.AnnotationNode
  * @since 0.2.0
  */
 @TupleConstructor
-class PicocliScriptBuilder {
+class PicocliScriptVisitor {
     /**
      * @since 0.2.0
      */
@@ -32,8 +32,7 @@ class PicocliScriptBuilder {
     /**
      * @since 0.2.0
      */
-    @SuppressWarnings('BuilderMethodWithSideEffects')
-    void build() {
+    void visit() {
         ClassNode declaringClass = methodNode.declaringClass
 
         addBaseClass(declaringClass)
@@ -75,5 +74,4 @@ class PicocliScriptBuilder {
 
         classNode.addAnnotation(commandAnn)
     }
-
 }
