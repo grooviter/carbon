@@ -21,10 +21,10 @@ class ConfigurationBuilderSpec extends Specification {
         )
 
         and: 'an instance of ConfigurationBuilder'
-        ConfigurationBuilder builder = new ConfigurationBuilder()
+        ConfigurationBuilder builder = new ConfigurationBuilder(mapX)
 
         when: 'extracting the configuration'
-        Map<String, ?> config = builder.build(mapX)
+        Map<String, ?> config = builder.build()
 
         then: 'config should have the expected values'
         verifyAll(config) {
@@ -39,10 +39,10 @@ class ConfigurationBuilderSpec extends Specification {
         ConstantExpression pathX = X.constX('src/test/resources/carbon/sql.yaml')
 
         and: 'an instance of ConfigurationBuilder'
-        ConfigurationBuilder builder = new ConfigurationBuilder()
+        ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
 
         when: 'extracting the configuration'
-        Map<String, ?> config = builder.build(pathX)
+        Map<String, ?> config = builder.build()
 
         then: 'config should have the expected values'
         config
