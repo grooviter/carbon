@@ -9,46 +9,40 @@ Carbon is a set of utilities to make it easier to develop http://www.groovy-lang
 ## How to use it ?
 
 ```Groovy
-#!/usr/bin/env carbon
+#!/usr/bin/env groovy
 
-name: 'hello-world'
-version: '1.0.0'
-configuration: '$HOME/db.yaml'
-description: '''
-This script says @|yellow hello |@ to the name
-passed as parameter:
+carbon = [
+    name: 'greetings',
+    version: '1.0.0',
+    description: '''
+    This script says @|yellow hello |@ to the name
+    passed as parameter:
 
-hello-word --name John
-'''
-
-params: [
-    user: [type: String, mandatory: true, description: 'Your name']
+    greetings --name John
+    ''',
+    options: [
+        user: [type: String, required: true, description: 'Your name']
+    ]
 ]
 
-script:
-
-List<Double> rows = sql
-    .rows(config.db.query, params.user)
-    .collect(onlyLatest)
-
-log.info "There're ${rows.size()} stocks for user ${params.user}"
+info "Hi there ${params.user}!"
 
 ```
 
-If you make the script executable and execute `./hellow-world.groovy -h`:
+If you make the script executable and execute `./greetings.groovy -h`:
 
 ```
 NAME:
-hello-world (1.0.0)
+greetings (1.0.0)
 
 SYNOPSIS:
-hello-world [-h] -u=PARAM
+greetings [-h] -u=PARAM
 
 DESCRIPTION:
 This script says hello  to the name
 passed as parameter:
 
-hello-word --name John
+greetings --name John
 
 
 OPTIONS:
@@ -59,10 +53,10 @@ AUTHORS:
 Still no description
 ```
 
-And if you execute `./hellow-world.groovy --user John`:
+And if you execute `./greetings.groovy --user John`:
 
 ```
-Hello John
+Hi there John!
 ```
 
 ## Installation
