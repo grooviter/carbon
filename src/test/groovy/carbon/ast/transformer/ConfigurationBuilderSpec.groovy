@@ -17,7 +17,16 @@ class ConfigurationBuilderSpec extends Specification {
         MapExpression mapX = X.mapX(
             X.mapEntryX(X.constX('name'), X.constX('simple-script')),
             X.mapEntryX(X.constX('version'), X.constX('1.0.1')),
-            X.mapEntryX(X.constX('description'), X.constX('simple script'))
+            X.mapEntryX(X.constX('description'), X.constX('simple script')),
+            X.mapEntryX(X.constX('unknown'), X.callThisX('println')),
+            X.mapEntryX(X.constX('options'), X.mapX(
+                    X.mapEntryX(X.constX('user'), X.mapX(
+                            X.mapEntryX(X.constX('type'), X.classX(String)),
+                            X.mapEntryX(X.constX('required'), X.constX(true))
+                        )
+                    )
+                )
+            )
         )
 
         and: 'an instance of ConfigurationBuilder'
@@ -31,12 +40,18 @@ class ConfigurationBuilderSpec extends Specification {
             name        == 'simple-script'
             version     == '1.0.1'
             description == 'simple script'
+
+            options.user.type == String
+            options.user.required == true
         }
+
+        and: 'no recognized expressions are left out'
+        !config.unknown
     }
 
     void 'Carbon\'s configuration from a string path'() {
         given: 'a carbon expression value'
-        ConstantExpression pathX = X.constX('src/test/resources/carbon/sql.yaml')
+        ConstantExpression pathX = X.constX('src/test/resources/carbon/ast/transformer/config.groovy')
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
@@ -46,5 +61,49 @@ class ConfigurationBuilderSpec extends Specification {
 
         then: 'config should have the expected values'
         config
+    }
+
+    void 'Carbon\'s configuration from a string path doesn\'t exist'() {
+        given: 'a carbon expression value'
+        ConstantExpression pathX = X.constX('src/test/resources/carbon/unknown.yaml')
+
+        and: 'an instance of ConfigurationBuilder'
+        ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
+
+        when: 'extracting the configuration'
+        builder.build()
+
+        then: 'config should throw an exception'
+        thrown(IllegalStateException)
+    }
+
+    void 'Carbon\'s configuration from a MapEntryExpression with configuration'() {
+        given: 'a carbon expression'
+        MapExpression mapX = X.mapX(
+            X.mapEntryX(X.constX('name'), X.constX('simple-script')),
+            X.mapEntryX(X.constX('version'), X.constX('1.0.1')),
+            X.mapEntryX(
+                X.constX('configuration'),
+                X.constX('src/test/resources/carbon/ast/transformer/config.groovy'))
+        )
+
+        and: 'an instance of ConfigurationBuilder'
+        ConfigurationBuilder builder = new ConfigurationBuilder(mapX)
+
+        when: 'extracting the configuration'
+        Map<String, ?> config = builder.build()
+
+        then: 'some values are taken from config file'
+        config.description.contains 'MD2, MD5'
+
+        and: 'some others keep the value written in the code'
+        config.version     == '1.0.1'
+        config.name        == 'simple-script'
+
+        and: 'check nested values'
+        verifyAll(config) {
+            options.algorithm.defaultValue == 'MD5'
+            options.algorithm.type == String
+        }
     }
 }

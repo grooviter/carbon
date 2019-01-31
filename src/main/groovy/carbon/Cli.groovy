@@ -1,7 +1,5 @@
 package carbon
 
-import org.yaml.snakeyaml.Yaml
-
 /**
  * Entry point for Carbon
  *
@@ -17,8 +15,7 @@ class Cli {
      * @since 0.1.0
      */
     static ConfiguredCli withConfig(String path) {
-        Yaml snakeYaml = new Yaml()
-        Map map = snakeYaml.load(new FileReader(path)) as Map
+        Map map = new ConfigSlurper().parse(new File(path).toURL()) as Map
 
         return new ConfiguredCli(map)
     }

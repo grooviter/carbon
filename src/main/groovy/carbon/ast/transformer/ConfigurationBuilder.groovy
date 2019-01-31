@@ -8,7 +8,6 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression
 import groovy.transform.TailRecursive
 import groovy.transform.TupleConstructor
 import groovy.util.logging.Log
-import org.yaml.snakeyaml.Yaml
 
 /**
  * Builds Carbon's configuration from the Carbon's variable found in
@@ -18,17 +17,10 @@ import org.yaml.snakeyaml.Yaml
  */
 @Log
 @TupleConstructor
+@SuppressWarnings('UnusedPrivateMethodParameter')
 class ConfigurationBuilder {
 
-    /**
-     * Default values
-     *
-     * @since 0.2.0
-     */
-    static final Map<String,?> DEFAULT = [
-        params:[:],
-        options:[:],
-    ]
+    static final String KEY_CONFIGURATION = 'configuration'
 
     /**
      * {@link Expression} containing the Carbon configuration
@@ -47,15 +39,27 @@ class ConfigurationBuilder {
     Map<String,?> build() {
         switch (expr) {
             case MapExpression:
-                List<MapEntryExpression> mapEntryXList = ((MapExpression)expr).mapEntryExpressions
-                return buildFromMap(mapEntryXList, DEFAULT)
+                return buildFromMap(expr)
             case ConstantExpression:
-                ConstantExpression constX = expr as ConstantExpression
-                return buildFromString(constX)
+                return buildFromString(expr)
 
             default:
                 return [:] // config should be only either a map or a string
         }
+    }
+
+    private Map<String, ?> buildFromMap(MapExpression mapExpression) {
+        List<MapEntryExpression> mapEntryXList = mapExpression.mapEntryExpressions
+        Map<String,?> config = buildFromMap(mapEntryXList)
+
+        if (config.configuration) {
+            Map<String, ?> merged = config.configuration + config
+            merged.remove(KEY_CONFIGURATION)
+
+            return merged
+        }
+
+        return config
     }
 
     @TailRecursive
@@ -70,24 +74,28 @@ class ConfigurationBuilder {
     private Map<String, ?> resolveEntry(MapEntryExpression entry) {
         Expression valueX = entry.valueExpression
         ConstantExpression keyX = entry.keyExpression
+        String key = keyX.text
 
-        return [(keyX.text):resolveEntryValue(valueX)]
+        return [(key):resolveEntryValue(key, valueX)]
     }
 
-    private Object resolveEntryValue(ConstantExpression entry) {
+    private Object resolveEntryValue(String key, ConstantExpression entry) {
+        if (key == KEY_CONFIGURATION) {
+            return buildFromString(entry)
+        }
+
         return entry.value
     }
 
-    private Object resolveEntryValue(ClassExpression entry) {
+    private Object resolveEntryValue(String key, ClassExpression entry) {
         return entry.type.typeClass
     }
 
-    private Object resolveEntryValue(MapExpression entry) {
+    private Object resolveEntryValue(String key, MapExpression entry) {
         return buildFromMap(entry.mapEntryExpressions)
     }
 
-    @SuppressWarnings('UnusedPrivateMethodParameter')
-    private Object resolveEntryValue(Expression entry) {
+    private Object resolveEntryValue(String key, Expression entry) {
         log.info "WARNING: Carbon entry of type ${entry.class} can't be processed"
         return null
     }
@@ -99,6 +107,6 @@ class ConfigurationBuilder {
             throw new IllegalStateException('Carbon configuration path doesn\'t exist')
         }
 
-        return new Yaml().load(new FileReader(configFile)) as Map
+        return new ConfigSlurper().parse(configFile.toURL())
     }
 }

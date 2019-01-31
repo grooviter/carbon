@@ -12,7 +12,7 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with default key'() {
         given: 'a configured Sql object'
-        def path = 'src/test/resources/carbon/sql.yaml'
+        def path = 'src/test/resources/carbon/sql.groovy'
         def sql = Cli.withConfig(path).sql().connection
 
         when: 'creating a new table'
@@ -27,7 +27,7 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with default key failure'() {
         given: 'a configured Sql object'
-        def path = 'src/test/resources/carbon/sql-empty.yaml'
+        def path = 'src/test/resources/carbon/sql-empty.groovy'
 
         when: 'creating a new table'
         Cli.withConfig(path).sql().connection
@@ -38,7 +38,7 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with custom key sucessfully'() {
         given: 'a configured Sql object'
-        def path = 'src/test/resources/carbon/sql.yaml'
+        def path = 'src/test/resources/carbon/sql.groovy'
         def sql = Cli.withConfig(path).sql().getConnection('sql2')
 
         when: 'creating a new table'
@@ -53,7 +53,7 @@ class ConfiguredCliSpec extends Specification {
 
     void 'test create table with custom key failure'() {
         given: 'a configured Sql object'
-        def path = 'src/test/resources/carbon/sql.yaml'
+        def path = 'src/test/resources/carbon/sql.groovy'
 
         when: 'creating a new table'
         Cli.withConfig(path).sql().getConnection('sql3')
