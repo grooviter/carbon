@@ -8,6 +8,7 @@ buildscript {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
 apply plugin: 'codenarc'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
@@ -34,6 +35,10 @@ dependencies {
         exclude module: "groovy-all"
         exclude module: "groovy"
     }
+}
+
+jacoco {
+ toolVersion = "0.8.1"
 }
 
 codenarc {
