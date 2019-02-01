@@ -4,7 +4,10 @@ import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
 import groovy.transform.Generated
 import groovy.transform.CompileStatic
+import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.AnnotationNode
+import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.classgen.VariableScopeVisitor
 
 /**
  * Utility functions used in several builder classes
@@ -102,5 +105,20 @@ class PicocliVisitorUtils {
      */
     static AnnotationNode getGeneratedAnnotation() {
         return A.NODES.annotation(Generated).build()
+    }
+
+    /**
+     * Reviews and fixes variable scopes along the changed code. This
+     * is specially necessary when resolving variables in new added
+     * closures.
+     *
+     * @param classNode to visit
+     * @param sourceUnit
+     * @since 0.2.0
+     */
+    static void visitAndResetVariableScopes(ClassNode classNode, SourceUnit sourceUnit) {
+        VariableScopeVisitor scopeVisitor = new VariableScopeVisitor(sourceUnit)
+
+        scopeVisitor.visitClass(classNode)
     }
 }

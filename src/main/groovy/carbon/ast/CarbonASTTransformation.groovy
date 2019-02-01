@@ -8,12 +8,12 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.AbstractASTTransformation
-import org.codehaus.groovy.classgen.VariableScopeVisitor
 import carbon.ast.transformer.PicocliOptsVisitor
 import carbon.ast.transformer.PicocliParamsVisitor
 import carbon.ast.transformer.PicocliScriptVisitor
 import carbon.ast.transformer.ExpressionFinder
 import carbon.ast.transformer.ConfigurationBuilder
+import carbon.ast.transformer.PicocliVisitorUtils
 
 /**
  * Applies a series of transformations to the script class and the
@@ -51,21 +51,6 @@ class CarbonASTTransformation extends AbstractASTTransformation {
 
         new PicocliScriptVisitor(classNode, carbonConfig).visit()
 
-        visitAndResetVariableScopes(methodNode, sourceUnit)
-    }
-
-    /**
-     * Reviews and fixes variable scopes along the changed code. This
-     * is specially necessary when resolving variables in new added
-     * closures.
-     *
-     * @param methodNode method to get its {@link ClassNode} from
-     * @param sourceUnit
-     * @since 0.2.0
-     */
-    private void visitAndResetVariableScopes(MethodNode methodNode, SourceUnit sourceUnit) {
-        VariableScopeVisitor scopeVisitor = new VariableScopeVisitor(sourceUnit)
-
-        scopeVisitor.visitClass(methodNode.declaringClass)
+        PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
     }
 }
