@@ -44,7 +44,6 @@ class ScriptSyntaxSpec extends CarbonSpec {
     void 'Check '() {
         expect:
         evaluateScript '''
-           import carbon.Cli
 
            carbon = [
              name: "carbon-example-3",
@@ -56,7 +55,7 @@ class ScriptSyntaxSpec extends CarbonSpec {
              ],
            ]
 
-           Cli.withConfig().logger.logln  "Hello ${params.name}"
+           println  "Hello ${params.name}"
         '''
     }
 }

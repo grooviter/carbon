@@ -26,11 +26,10 @@ import org.codehaus.groovy.ast.AnnotationNode
 class PicocliScriptVisitor {
 
     /**
-     * {@link MethodNode} instance to apply the changes to
      *
      * @since 0.2.0
      */
-    MethodNode methodNode
+    ClassNode classNode
 
     /**
      * Carbon configuration
@@ -45,28 +44,25 @@ class PicocliScriptVisitor {
      * @since 0.2.0
      */
     void visit() {
-        ClassNode declaringClass = methodNode.declaringClass
-
         // Make script extend PicocliBaseScript
-        addBaseClass(declaringClass)
+        addBaseClass()
 
         // Move run method to runScriptBody
-        moveRunMethod(methodNode)
+        moveRunMethod()
 
         // Remove binding constructor if necesssary
-        removeBindingConstructorIfNeccessary(declaringClass)
+        removeBindingConstructorIfNeccessary()
 
         // Add @Command annotation to script class
-        addCommandAnnotation(declaringClass, carbonConfig)
+        addCommandAnnotation()
     }
 
-    private void addBaseClass(ClassNode classNode) {
+    private void addBaseClass() {
         classNode.superClass = A.NODES.clazz(PicocliBaseScript).build()
     }
 
-    private void moveRunMethod(MethodNode methodNode) {
-        ClassNode classNode = methodNode
-            .declaringClass
+    private void moveRunMethod() {
+        MethodNode methodNode = classNode.getMethod('run')
         MethodNode runScriptBody = A.NODES
             .method('runScriptBody')
             .code(methodNode.code)
@@ -77,20 +73,20 @@ class PicocliScriptVisitor {
         classNode.removeMethod(methodNode)
     }
 
-    private void removeBindingConstructorIfNeccessary(ClassNode classNode) {
+    private void removeBindingConstructorIfNeccessary() {
         Parameter[] parameter = [A.NODES.param('context').type(ClassHelper.BINDING_TYPE).build()]
         Boolean hasBindingCtor = classNode
             .superClass
             .getDeclaredConstructor(parameter)
 
         if (!hasBindingCtor) {
-            ConstructorNode orphanedConstructor = classNode.getDeclaredConstructor(PARAMS)
+            ConstructorNode orphanedConstructor = classNode.getDeclaredConstructor(parameter)
             classNode.removeConstructor(orphanedConstructor)
         }
     }
 
-    private void addCommandAnnotation(ClassNode classNode, Map<String,?> config) {
-        AnnotationNode commandAnn = new CommandAnnotationBuilder(config).build()
+    private void addCommandAnnotation() {
+        AnnotationNode commandAnn = new CommandAnnotationBuilder(carbonConfig).build()
 
         classNode.addAnnotation(commandAnn)
     }

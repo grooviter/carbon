@@ -60,6 +60,10 @@ class PicocliParamsVisitor {
     void visit() {
         Map<String, ?> parameters = carbonConfig.params as Map<String,?>
 
+        if (!parameters) {
+            return
+        }
+
         parameters
             .entrySet()
             .stream()

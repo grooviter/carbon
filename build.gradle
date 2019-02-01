@@ -23,11 +23,7 @@ dependencies {
         exclude module: "groovy"
     }
     compile "org.codehaus.groovy:groovy:$groovy_all"
-    compile "org.codehaus.groovy:groovy-sql:$groovy_all"
     compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
-    compile "org.fusesource.jansi:jansi:$jansiVersion"
-    compile "org.zeroturnaround:zt-zip:$zt"
-
     testCompile "com.h2database:h2:$h2"
     testCompile "org.spockframework:spock-core:$spock_core"
     testCompile("com.github.grooviter:asteroid:$asteroid") {

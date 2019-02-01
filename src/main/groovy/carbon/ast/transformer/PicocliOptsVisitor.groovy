@@ -40,6 +40,8 @@ class PicocliOptsVisitor {
     static final Map<String, Closure> OPT_MAPPERS = [
         required:U.extractValue('required'),
         description:U.extractValue('description'),
+        usageHelp:U.extractValue('usageHelp'),
+        versionHelp:U.extractValue('versionHelp'),
     ]
 
     /**
@@ -62,6 +64,10 @@ class PicocliOptsVisitor {
     @SuppressWarnings('Indentation')
     void visit() {
         Map<String, ?> options = carbonConfig.options as Map<String,?>
+
+        if (!options) {
+            return
+        }
 
         options
             .entrySet()
