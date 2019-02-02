@@ -15,14 +15,14 @@ class ConfigurationBuilderSpec extends Specification {
     void 'Carbon\'s configuration from a MapEntryExpression'() {
         given: 'a carbon expression'
         MapExpression mapX = X.mapX(
-            X.mapEntryX(X.constX('name'), X.constX('simple-script')),
-            X.mapEntryX(X.constX('version'), X.constX('1.0.1')),
-            X.mapEntryX(X.constX('description'), X.constX('simple script')),
-            X.mapEntryX(X.constX('unknown'), X.callThisX('println')),
-            X.mapEntryX(X.constX('options'), X.mapX(
-                    X.mapEntryX(X.constX('user'), X.mapX(
-                            X.mapEntryX(X.constX('type'), X.classX(String)),
-                            X.mapEntryX(X.constX('required'), X.constX(true))
+            X.mapEntryX('name', X.constX('simple-script')),
+            X.mapEntryX('version', X.constX('1.0.1')),
+            X.mapEntryX('description', X.constX('simple script')),
+            X.mapEntryX('unknown', X.callThisX('println')),
+            X.mapEntryX('options', X.mapX(
+                    X.mapEntryX('user', X.mapX(
+                            X.mapEntryX('type', X.classX(String)),
+                            X.mapEntryX('required', X.constX(true))
                         )
                     )
                 )
@@ -80,8 +80,8 @@ class ConfigurationBuilderSpec extends Specification {
     void 'Carbon\'s configuration from a MapEntryExpression with configuration'() {
         given: 'a carbon expression'
         MapExpression mapX = X.mapX(
-            X.mapEntryX(X.constX('name'), X.constX('simple-script')),
-            X.mapEntryX(X.constX('version'), X.constX('1.0.1')),
+            X.mapEntryX('name', X.constX('simple-script')),
+            X.mapEntryX('version', X.constX('1.0.1')),
             X.mapEntryX(
                 X.constX('configuration'),
                 X.constX('src/test/resources/carbon/ast/transformer/config.groovy'))

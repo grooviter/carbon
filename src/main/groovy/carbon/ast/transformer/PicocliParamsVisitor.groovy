@@ -64,12 +64,14 @@ class PicocliParamsVisitor {
             return
         }
 
+        ClassNode classNode = methodNode.declaringClass
+
         parameters
             .entrySet()
             .stream()
             .map(PicocliParamsVisitor.&toField)
             .forEach { FieldNode field ->
-                methodNode.declaringClass.addField(field)
+                A.UTIL.NODE.addGeneratedField(classNode, field)
             }
     }
 
@@ -81,8 +83,6 @@ class PicocliParamsVisitor {
         U.applyX(U.intersectByKeys(OPT_MAPPERS, entry.value), builder, entry)
 
         newField.addAnnotation(builder.build())
-        newField.addAnnotation(U.generatedAnnotation)
-        newField.synthetic = true
 
         return newField
     }
@@ -97,13 +97,10 @@ class PicocliParamsVisitor {
             A.NODES.clazz((simple - ARRAY_CLASS_PREFIX) - ';').build().makeArray() :
             A.NODES.clazz(simple).build()
 
-        return new FieldNode(
-            optionName,
-            FieldNode.ACC_PUBLIC,
-            clazzNode,
-            null,
-            null
-        )
+        return A.NODES.field(optionName)
+            .modifiers(FieldNode.ACC_PUBLIC)
+            .type(clazzNode)
+            .build()
     }
 
     private static void defaultParamLabel(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {

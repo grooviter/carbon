@@ -7,6 +7,7 @@ import picocli.CommandLine
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.FieldNode
+import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ListExpression
@@ -69,12 +70,14 @@ class PicocliOptsVisitor {
             return
         }
 
+        ClassNode classNode = methodNode.declaringClass
+
         options
             .entrySet()
             .stream()
             .map(PicocliOptsVisitor.&toField)
             .forEach { FieldNode field ->
-                methodNode.declaringClass.addField(field)
+                A.UTIL.NODE.addGeneratedField(classNode, field)
             }
     }
 
@@ -86,8 +89,6 @@ class PicocliOptsVisitor {
         U.applyX(U.intersectByKeys(OPT_MAPPERS, entry.value), builder, entry)
 
         newField.addAnnotation(builder.build())
-        newField.addAnnotation(U.generatedAnnotation)
-        newField.synthetic = true
 
         return newField
     }
@@ -98,13 +99,12 @@ class PicocliOptsVisitor {
         Class clazz = val.type as Class
         Expression initialX = A.EXPR.constX(val.defaultValue)
 
-        return new FieldNode(
-            optionName,
-            FieldNode.ACC_PUBLIC,
-            A.NODES.clazz(clazz).build(),
-            null,
-            initialX
-        )
+        return A.NODES
+            .field(optionName)
+            .modifiers(FieldNode.ACC_PUBLIC)
+            .type(clazz)
+            .expression(initialX)
+            .build()
     }
 
     private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {

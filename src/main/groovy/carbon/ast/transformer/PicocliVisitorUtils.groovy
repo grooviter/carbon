@@ -2,10 +2,8 @@ package carbon.ast.transformer
 
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
-import groovy.transform.Generated
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.ClassNode
-import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.classgen.VariableScopeVisitor
 
@@ -93,18 +91,6 @@ class PicocliVisitorUtils {
         Set<String> keys = left.keySet().intersect(right.keySet())
 
         return left.subMap(keys) as Map<String,T>
-    }
-
-    /**
-     * Creates an annotation of type {@link Generated}. This
-     * annotation helps coverage tools to avoid assessing generated
-     * code.
-     *
-     * @return an {@link AnnotationNode} of type {@link Generated}
-     * @since 0.2.0
-     */
-    static AnnotationNode getGeneratedAnnotation() {
-        return A.NODES.annotation(Generated).build()
     }
 
     /**
