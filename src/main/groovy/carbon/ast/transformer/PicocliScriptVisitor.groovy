@@ -51,7 +51,7 @@ class PicocliScriptVisitor {
         moveRunMethod()
 
         // Remove binding constructor if necesssary
-        removeBindingConstructorIfNeccessary()
+        removeBindingConstructorIfNecessary()
 
         // Add @Command annotation to script class
         addCommandAnnotation()
@@ -73,7 +73,7 @@ class PicocliScriptVisitor {
         classNode.removeMethod(methodNode)
     }
 
-    private void removeBindingConstructorIfNeccessary() {
+    private void removeBindingConstructorIfNecessary() {
         Parameter[] parameter = [A.NODES.param('context').type(ClassHelper.BINDING_TYPE).build()]
         Boolean hasBindingCtor = classNode
             .superClass
