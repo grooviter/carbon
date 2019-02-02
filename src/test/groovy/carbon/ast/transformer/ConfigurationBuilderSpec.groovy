@@ -1,9 +1,9 @@
 package carbon.ast.transformer
 
+import org.codehaus.groovy.control.CompilePhase
 import spock.lang.Specification
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
-import asteroid.Expressions as X
 
 /**
  * Checks the functionality of class {@link ConfigurationBuilder}
@@ -14,20 +14,17 @@ class ConfigurationBuilderSpec extends Specification {
 
     void 'Carbon\'s configuration from a MapEntryExpression'() {
         given: 'a carbon expression'
-        MapExpression mapX = X.mapX(
-            X.mapEntryX('name', X.constX('simple-script')),
-            X.mapEntryX('version', X.constX('1.0.1')),
-            X.mapEntryX('description', X.constX('simple script')),
-            X.mapEntryX('unknown', X.callThisX('println')),
-            X.mapEntryX('options', X.mapX(
-                    X.mapEntryX('user', X.mapX(
-                            X.mapEntryX('type', X.classX(String)),
-                            X.mapEntryX('required', X.constX(true))
-                        )
-                    )
-                )
-            )
-        )
+        MapExpression mapX = macro(CompilePhase.SEMANTIC_ANALYSIS) {
+            [
+                name:'simple',
+                version:'1.0.1',
+                description:'simple script',
+                unknown:''.trim(),
+                options:[
+                    user:[type:String, required:true]
+                ]
+            ]
+        }
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(mapX)
@@ -37,7 +34,7 @@ class ConfigurationBuilderSpec extends Specification {
 
         then: 'config should have the expected values'
         verifyAll(config) {
-            name        == 'simple-script'
+            name        == 'simple'
             version     == '1.0.1'
             description == 'simple script'
 
@@ -51,7 +48,7 @@ class ConfigurationBuilderSpec extends Specification {
 
     void 'Carbon\'s configuration from a string path'() {
         given: 'a carbon expression value'
-        ConstantExpression pathX = X.constX('src/test/resources/carbon/ast/transformer/config.groovy')
+        ConstantExpression pathX = macro { 'src/test/resources/carbon/ast/transformer/config.groovy' }
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
@@ -65,7 +62,7 @@ class ConfigurationBuilderSpec extends Specification {
 
     void 'Carbon\'s configuration from a string path doesn\'t exist'() {
         given: 'a carbon expression value'
-        ConstantExpression pathX = X.constX('src/test/resources/carbon/unknown.yaml')
+        ConstantExpression pathX = macro { 'src/test/resources/carbon/unknown.yaml' }
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
@@ -79,13 +76,13 @@ class ConfigurationBuilderSpec extends Specification {
 
     void 'Carbon\'s configuration from a MapEntryExpression with configuration'() {
         given: 'a carbon expression'
-        MapExpression mapX = X.mapX(
-            X.mapEntryX('name', X.constX('simple-script')),
-            X.mapEntryX('version', X.constX('1.0.1')),
-            X.mapEntryX(
-                X.constX('configuration'),
-                X.constX('src/test/resources/carbon/ast/transformer/config.groovy'))
-        )
+        MapExpression mapX = macro(CompilePhase.SEMANTIC_ANALYSIS) {
+            [
+                name:'simple-script',
+                version:'1.0.1',
+                configuration:'src/test/resources/carbon/ast/transformer/config.groovy',
+            ]
+        }
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(mapX)
