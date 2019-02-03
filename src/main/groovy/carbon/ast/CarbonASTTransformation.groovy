@@ -1,19 +1,22 @@
 package carbon.ast
 
-import org.codehaus.groovy.ast.ASTNode
-import org.codehaus.groovy.ast.ClassNode
-import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.ast.expr.Expression
-import org.codehaus.groovy.control.SourceUnit
-import org.codehaus.groovy.control.CompilePhase
-import org.codehaus.groovy.transform.GroovyASTTransformation
-import org.codehaus.groovy.transform.AbstractASTTransformation
+import carbon.ast.transformer.ConfigurationBuilder
 import carbon.ast.transformer.PicocliOptsVisitor
 import carbon.ast.transformer.PicocliParamsVisitor
 import carbon.ast.transformer.PicocliScriptVisitor
-import carbon.ast.transformer.ExpressionFinder
-import carbon.ast.transformer.ConfigurationBuilder
 import carbon.ast.transformer.PicocliVisitorUtils
+import groovy.transform.CompileStatic
+import org.codehaus.groovy.ast.ASTNode
+import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.ModuleNode
+import org.codehaus.groovy.ast.expr.BinaryExpression
+import org.codehaus.groovy.control.CompilePhase
+import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.macro.matcher.ASTMatcher
+import org.codehaus.groovy.macro.matcher.TreeContext
+import org.codehaus.groovy.transform.AbstractASTTransformation
+import org.codehaus.groovy.transform.GroovyASTTransformation
 
 /**
  * Applies a series of transformations to the script class and the
@@ -22,35 +25,48 @@ import carbon.ast.transformer.PicocliVisitorUtils
  *
  * @since 0.2.0
  */
+@CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 class CarbonASTTransformation extends AbstractASTTransformation {
 
+    private static final ASTNode PATTERN = macro { carbon = _ } as ASTNode
+
     @Override
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
-        sourceUnit.AST.classes
-            .find(this.&isScript)
-            .each(this.&applyToClassNode)
+        ASTNode node = nodes.find() as ASTNode
+
+        switch (node) {
+            case ModuleNode:
+                ModuleNode moduleNode = node as ModuleNode
+                moduleNode
+                    .classes
+                    .find(this.&isScript)
+                    .each(this.&applyToClassNode)
+
+            default: return
+        }
     }
 
-    private Boolean isScript(ClassNode classNode) {
-        return classNode.superClass.name == Script.name
+    private Boolean isScript(ClassNode node) {
+        return node.superClass.name == Script.name
     }
 
+    @SuppressWarnings('Indentation')
     private void applyToClassNode(ClassNode classNode) {
         MethodNode methodNode = classNode.getMethod('run')
-        Expression carbonX = new ExpressionFinder(this.sourceUnit).find(methodNode)
-        Map<String,?> carbonConfig = new ConfigurationBuilder(carbonX).build()
+        TreeContext context = ASTMatcher
+            .find(methodNode.code, PATTERN)
+            .find()
 
-        if (!carbonConfig) {
-            return
-        }
-
-        new PicocliOptsVisitor(methodNode, carbonConfig).visit()
-
-        new PicocliParamsVisitor(methodNode, carbonConfig).visit()
-
-        new PicocliScriptVisitor(classNode, carbonConfig).visit()
-
-        PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
+        Optional
+            .ofNullable(context)
+            .map { (BinaryExpression) it.node }
+            .map { new ConfigurationBuilder(it.rightExpression).build() }
+            .ifPresent {
+                new PicocliOptsVisitor(methodNode, it).visit()
+                new PicocliParamsVisitor(methodNode, it).visit()
+                new PicocliScriptVisitor(classNode, it).visit()
+                PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
+            }
     }
 }

@@ -75,11 +75,11 @@ class PicocliScriptVisitor {
 
     private void removeBindingConstructorIfNecessary() {
         Parameter[] parameter = [A.NODES.param('context').type(ClassHelper.BINDING_TYPE).build()]
-        Boolean hasBindingCtor = classNode
+        Boolean hasBindingConstructor = classNode
             .superClass
             .getDeclaredConstructor(parameter)
 
-        if (!hasBindingCtor) {
+        if (!hasBindingConstructor) {
             ConstructorNode orphanedConstructor = classNode.getDeclaredConstructor(parameter)
             classNode.removeConstructor(orphanedConstructor)
         }

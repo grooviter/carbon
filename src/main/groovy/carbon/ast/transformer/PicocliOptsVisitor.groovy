@@ -3,6 +3,7 @@ package carbon.ast.transformer
 import carbon.ast.transformer.PicocliVisitorUtils as U
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
+import org.codehaus.groovy.ast.expr.ConstantExpression
 import picocli.CommandLine
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -109,10 +110,9 @@ class PicocliOptsVisitor {
 
     private static void defaultNames(AnnotationNodeBuilder builder, Map.Entry<String,?> entry) {
         String optionName = entry.key
-        ListExpression optionNamesX = A.EXPR.listX(
-            A.EXPR.constX("--$optionName".toString()),
-            A.EXPR.constX("-${optionName[0]}".toString())
-        )
+        ConstantExpression longOpt = A.EXPR.constX("--$optionName".toString())
+        ConstantExpression shortOpt = A.EXPR.constX("-${optionName[0]}".toString())
+        ListExpression optionNamesX = A.EXPR.listX(longOpt, shortOpt)
 
         builder.member('names', optionNamesX)
     }
