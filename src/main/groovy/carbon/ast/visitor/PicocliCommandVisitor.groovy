@@ -1,17 +1,19 @@
 package carbon.ast.visitor
 
+import static picocli.CommandLine.Command
+
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.ClassNode
 
-import static picocli.CommandLine.Command
-
 /**
- * Builds a {@link Command} annotation
+ * Adds Command annotation to Script {@link ClassNode}
  *
  * @since 0.2.0
  */
+@CompileStatic
 @TupleConstructor
 class PicocliCommandVisitor {
 

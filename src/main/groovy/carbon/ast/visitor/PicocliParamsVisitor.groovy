@@ -1,6 +1,6 @@
 package carbon.ast.visitor
 
-import carbon.ast.transformer.PicocliVisitorUtils as U
+import carbon.ast.visitor.PicocliVisitorUtils as U
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
 import picocli.CommandLine

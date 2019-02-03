@@ -1,6 +1,7 @@
 package carbon.ast.visitor
 
 import asteroid.A
+import groovy.transform.CompileStatic
 import picocli.groovy.PicocliBaseScript
 import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.ClassHelper
@@ -16,11 +17,11 @@ import org.codehaus.groovy.ast.ConstructorNode
  *   <li>Makes the Script to extend {@link PicocliBaseScript}</li>
  *   <li>Moves the Script's run method to runScriptBody method</li>
  *   <li>Removes the constructor with the binding context if super class doesn't have it</li>
- *   <li>Adds Command annotation to Script</li>
  * </ul>
  *
  * @since 0.2.0
  */
+@CompileStatic
 @TupleConstructor
 class PicocliScriptVisitor {
 

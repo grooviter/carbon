@@ -73,10 +73,10 @@ class PicocliVisitorUtils {
      * @return a submap of the left map containing entries not found in right map
      * @since 0.2.0
      */
-    static Map<String,?> diffByKeys(Map<String,?> left, Map<String,?> right) {
+    static Map<String,Closure> diffByKeys(Map<String,Closure> left, Map<String,?> right) {
         Set<String> keys = left.keySet() - right.keySet()
 
-        return left.subMap(keys) as Map<String,?>
+        return left.subMap(keys) as Map<String,Closure>
     }
 
     /**
@@ -89,13 +89,13 @@ class PicocliVisitorUtils {
      * @return a submap of the left map containing entries found in right map
      * @since 0.2.0
      */
-    static Map<String,?> intersectByKeys(Map<String,?> left, Map<String,?> right) {
+    static Map<String,Closure> intersectByKeys(Map<String,Closure> left, Map<String,?> right) {
         Set<String> leftKeys = left.keySet()
         Set<String> rightKeys = right.keySet()
 
         Set<String> keys = leftKeys.intersect((Iterable<String>) rightKeys)
 
-        return left.subMap(keys) as Map<String,?>
+        return left.subMap(keys) as Map<String,Closure>
     }
 
     /**

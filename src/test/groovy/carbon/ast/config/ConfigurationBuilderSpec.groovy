@@ -1,6 +1,5 @@
-package carbon.ast.visitor
+package carbon.ast.config
 
-import carbon.ast.config.ConfigurationBuilder
 import org.codehaus.groovy.control.CompilePhase
 import spock.lang.Specification
 import org.codehaus.groovy.ast.expr.MapExpression
@@ -49,7 +48,7 @@ class ConfigurationBuilderSpec extends Specification {
 
     void 'Carbon\'s configuration from a string path'() {
         given: 'a carbon expression value'
-        ConstantExpression pathX = macro { 'src/test/resources/carbon/ast/transformer/config.groovy' }
+        ConstantExpression pathX = macro { 'src/test/resources/carbon/ast/config/config.groovy' }
 
         and: 'an instance of ConfigurationBuilder'
         ConfigurationBuilder builder = new ConfigurationBuilder(pathX)
@@ -81,7 +80,7 @@ class ConfigurationBuilderSpec extends Specification {
             [
                 name:'simple-script',
                 version:'1.0.1',
-                configuration:'src/test/resources/carbon/ast/transformer/config.groovy',
+                configuration:'src/test/resources/carbon/ast/config/config.groovy',
             ]
         }
 
