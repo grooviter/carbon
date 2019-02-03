@@ -30,6 +30,7 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 class CarbonASTTransformation extends AbstractASTTransformation {
 
     private static final ASTNode PATTERN = macro { carbon = _ } as ASTNode
+    private static final String METHOD_RUN = 'run'
 
     @Override
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
@@ -53,7 +54,7 @@ class CarbonASTTransformation extends AbstractASTTransformation {
 
     @SuppressWarnings('Indentation')
     private void applyToClassNode(ClassNode classNode) {
-        MethodNode methodNode = classNode.getMethod('run')
+        MethodNode methodNode = classNode.getMethod(METHOD_RUN)
         TreeContext context = ASTMatcher
             .find(methodNode.code, PATTERN)
             .find()
@@ -66,6 +67,7 @@ class CarbonASTTransformation extends AbstractASTTransformation {
                 new PicocliOptsVisitor(methodNode, it).visit()
                 new PicocliParamsVisitor(methodNode, it).visit()
                 new PicocliScriptVisitor(classNode, it).visit()
+
                 PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
             }
     }
