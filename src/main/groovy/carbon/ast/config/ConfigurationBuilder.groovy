@@ -1,4 +1,4 @@
-package carbon.ast.transformer
+package carbon.ast.config
 
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ClassExpression

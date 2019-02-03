@@ -1,4 +1,4 @@
-package carbon.ast.transformer
+package carbon.ast.visitor
 
 import carbon.ast.transformer.PicocliVisitorUtils as U
 import asteroid.A
@@ -29,7 +29,7 @@ class PicocliOptsVisitor {
      *
      * @since 0.2.0
      */
-    static final Map<String, Closure> DEFAULTS = [
+    static final Map<String, Closure<Void>> DEFAULTS = [
         names:PicocliOptsVisitor.&defaultNames,
     ]
 
@@ -39,7 +39,7 @@ class PicocliOptsVisitor {
      *
      * @since 0.2.0
      */
-    static final Map<String, Closure> OPT_MAPPERS = [
+    static final Map<String, Closure<Void>> OPT_MAPPERS = [
         required:U.extractValue('required'),
         description:U.extractValue('description'),
         usageHelp:U.extractValue('usageHelp'),

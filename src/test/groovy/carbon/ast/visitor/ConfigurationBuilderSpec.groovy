@@ -1,12 +1,13 @@
-package carbon.ast.transformer
+package carbon.ast.visitor
 
+import carbon.ast.config.ConfigurationBuilder
 import org.codehaus.groovy.control.CompilePhase
 import spock.lang.Specification
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 
 /**
- * Checks the functionality of class {@link ConfigurationBuilder}
+ * Checks the functionality of class {@link carbon.ast.config.ConfigurationBuilder}
  *
  * @since 0.2.0
  */

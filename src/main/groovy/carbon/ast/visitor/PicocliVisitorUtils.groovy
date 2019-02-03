@@ -1,4 +1,4 @@
-package carbon.ast.transformer
+package carbon.ast.visitor
 
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
@@ -51,7 +51,7 @@ class PicocliVisitorUtils {
      * {@link AnnotationNodeBuilder}
      * @since 0.2.0
      */
-    static Closure extractValue(String property) {
+    static Closure<Void> extractValue(String property) {
         return { AnnotationNodeBuilder builder, Map.Entry<String,?> entry ->
             Map<String,?> val = entry.value as Map<String,?>
             Object propertyValue = val[property]
@@ -59,6 +59,8 @@ class PicocliVisitorUtils {
             if (propertyValue) {
                 builder.member(property, A.EXPR.constX(propertyValue))
             }
+
+            return
         }
     }
 
@@ -71,10 +73,10 @@ class PicocliVisitorUtils {
      * @return a submap of the left map containing entries not found in right map
      * @since 0.2.0
      */
-    static <T> Map<String,T> diffByKeys(Map<String,T> left, Map<String,?> right) {
+    static Map<String,?> diffByKeys(Map<String,?> left, Map<String,?> right) {
         Set<String> keys = left.keySet() - right.keySet()
 
-        return left.subMap(keys) as Map<String,T>
+        return left.subMap(keys) as Map<String,?>
     }
 
     /**
@@ -87,10 +89,13 @@ class PicocliVisitorUtils {
      * @return a submap of the left map containing entries found in right map
      * @since 0.2.0
      */
-    static <T> Map<String,T> intersectByKeys(Map<String,T> left, Map<String,?> right) {
-        Set<String> keys = left.keySet().intersect(right.keySet())
+    static Map<String,?> intersectByKeys(Map<String,?> left, Map<String,?> right) {
+        Set<String> leftKeys = left.keySet()
+        Set<String> rightKeys = right.keySet()
 
-        return left.subMap(keys) as Map<String,T>
+        Set<String> keys = leftKeys.intersect((Iterable<String>) rightKeys)
+
+        return left.subMap(keys) as Map<String,?>
     }
 
     /**

@@ -1,4 +1,4 @@
-package carbon.ast.transformer
+package carbon.ast.visitor
 
 import asteroid.A
 import picocli.groovy.PicocliBaseScript
@@ -8,7 +8,6 @@ import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.ConstructorNode
-import org.codehaus.groovy.ast.AnnotationNode
 
 /**
  * Executes a series of tasks over the script class.
@@ -52,9 +51,6 @@ class PicocliScriptVisitor {
 
         // Remove binding constructor if necesssary
         removeBindingConstructorIfNecessary()
-
-        // Add @Command annotation to script class
-        addCommandAnnotation()
     }
 
     private void addBaseClass() {
@@ -83,11 +79,5 @@ class PicocliScriptVisitor {
             ConstructorNode orphanedConstructor = classNode.getDeclaredConstructor(parameter)
             classNode.removeConstructor(orphanedConstructor)
         }
-    }
-
-    private void addCommandAnnotation() {
-        AnnotationNode commandAnn = new CommandAnnotationBuilder(carbonConfig).build()
-
-        classNode.addAnnotation(commandAnn)
     }
 }

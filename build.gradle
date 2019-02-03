@@ -83,6 +83,6 @@ task('console', dependsOn:'classes', type: JavaExec) {
     group = 'help'
     description 'starts a Groovy console with the classpath of the current project'
     main='groovy.ui.Console'
-    project.dependencies.add("compile", 'org.codehaus.groovy:groovy-console:2.4.12')
+    project.dependencies.add("compile", "org.codehaus.groovy:groovy-console:$groovy_all")
     classpath = sourceSets.main.runtimeClasspath
 }

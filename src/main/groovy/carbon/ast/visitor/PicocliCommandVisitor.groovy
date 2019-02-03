@@ -1,11 +1,11 @@
-package carbon.ast.transformer
-
-import static picocli.CommandLine.Command
+package carbon.ast.visitor
 
 import asteroid.A
 import asteroid.nodes.AnnotationNodeBuilder
-import org.codehaus.groovy.ast.AnnotationNode
 import groovy.transform.TupleConstructor
+import org.codehaus.groovy.ast.ClassNode
+
+import static picocli.CommandLine.Command
 
 /**
  * Builds a {@link Command} annotation
@@ -13,7 +13,7 @@ import groovy.transform.TupleConstructor
  * @since 0.2.0
  */
 @TupleConstructor
-class CommandAnnotationBuilder {
+class PicocliCommandVisitor {
 
     /**
      * Allowed properties to be used when building the annotation
@@ -26,6 +26,11 @@ class CommandAnnotationBuilder {
     ]
 
     /**
+     * @since 0.2.0
+     */
+    ClassNode classNode
+
+    /**
      * Carbon configuration
      *
      * @since 0.2.0
@@ -33,20 +38,17 @@ class CommandAnnotationBuilder {
     Map<String,?> config
 
     /**
-     * Returns a configured {@link AnnotationNode} representing an
-     * annotation of type {@link Command}
      *
-     * @return an instance of {@link AnnotationNode}
      * @since 0.2.0
      */
-    AnnotationNode build() {
+    void visit() {
         Map<String, ?> propsToApply = config.subMap(VALID_PROPERTIES)
         AnnotationNodeBuilder annotationBuilder = propsToApply.inject(
             A.NODES.annotation(Command),
             this.&configureNextProperty
         )
 
-        return annotationBuilder.build()
+        classNode.addAnnotation(annotationBuilder.build())
     }
 
     private AnnotationNodeBuilder configureNextProperty(AnnotationNodeBuilder acc, Map.Entry<String, ?> entry) {

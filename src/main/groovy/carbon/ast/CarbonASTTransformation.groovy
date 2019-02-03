@@ -1,10 +1,11 @@
 package carbon.ast
 
-import carbon.ast.transformer.ConfigurationBuilder
-import carbon.ast.transformer.PicocliOptsVisitor
-import carbon.ast.transformer.PicocliParamsVisitor
-import carbon.ast.transformer.PicocliScriptVisitor
-import carbon.ast.transformer.PicocliVisitorUtils
+import carbon.ast.config.ConfigurationBuilder
+import carbon.ast.visitor.PicocliCommandVisitor
+import carbon.ast.visitor.PicocliOptsVisitor
+import carbon.ast.visitor.PicocliParamsVisitor
+import carbon.ast.visitor.PicocliScriptVisitor
+import carbon.ast.visitor.PicocliVisitorUtils
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassNode
@@ -67,6 +68,7 @@ class CarbonASTTransformation extends AbstractASTTransformation {
                 new PicocliOptsVisitor(methodNode, it).visit()
                 new PicocliParamsVisitor(methodNode, it).visit()
                 new PicocliScriptVisitor(classNode, it).visit()
+                new PicocliCommandVisitor(classNode, it).visit()
 
                 PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
             }
