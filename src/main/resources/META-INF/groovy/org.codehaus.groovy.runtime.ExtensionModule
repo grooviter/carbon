@@ -1,0 +1,3 @@
+moduleName=BasicFeatures
+moduleVersion=0.2.0
+extensionClasses=carbon.ast.feature.WatchFeature,carbon.ast.feature.FileFeature,carbon.ast.feature.AnsiFeature

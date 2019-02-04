@@ -1,6 +1,7 @@
 package carbon.ast.visitor
 
 import asteroid.A
+import carbon.ast.CarbonScript
 import groovy.transform.CompileStatic
 import picocli.groovy.PicocliBaseScript
 import groovy.transform.TupleConstructor
@@ -55,7 +56,7 @@ class PicocliScriptVisitor {
     }
 
     private void addBaseClass() {
-        classNode.superClass = A.NODES.clazz(PicocliBaseScript).build()
+        classNode.superClass = A.NODES.clazz(CarbonScript).build()
     }
 
     private void moveRunMethod() {
