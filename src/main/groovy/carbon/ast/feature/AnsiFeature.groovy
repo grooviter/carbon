@@ -86,7 +86,7 @@ class AnsiFeature {
             .eraseScreen()
     }
 
-    private String processRow(Map<String,?> rowToProcess) {
+    private static String processRow(Map<String,?> rowToProcess) {
         return rowToProcess
                 .keySet()
                 .collect { k -> rowToProcess[k].toString().take(PADDING).padRight(PADDING) }
