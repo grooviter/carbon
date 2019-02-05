@@ -23,8 +23,11 @@ class PicocliCommandVisitor {
      * @since 0.2.0
      */
     static final List<String> VALID_PROPERTIES = [
+        'header',
         'version',
         'description',
+        'footerHeading',
+        'footer'
     ]
 
     /**
