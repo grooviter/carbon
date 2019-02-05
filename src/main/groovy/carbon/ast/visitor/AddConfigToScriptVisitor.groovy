@@ -44,7 +44,17 @@ class AddConfigToScriptVisitor {
         A.UTIL.NODE.addGeneratedField(classNode, carbonConfigField)
     }
 
+    @SuppressWarnings('FactoryMethodName')
+    private static FieldNode createCarbonConfigField(MapExpression mapExpression) {
+        return A.NODES
+                .field('carbonConfig')
+                .type(Map)
+                .expression(mapExpression)
+                .build()
+    }
+
     @TailRecursive
+    @SuppressWarnings('FactoryMethodName')
     private MapExpression buildMapX(Collection<Map.Entry<String,?>> entries, MapExpression acc = new MapExpression()) {
         if (entries.isEmpty()) {
             return acc
@@ -67,13 +77,5 @@ class AddConfigToScriptVisitor {
 
     private MapEntryExpression resolveEntry(String key, Object value) {
         return A.EXPR.mapEntryX(key, A.EXPR.constX(value))
-    }
-
-    private static FieldNode createCarbonConfigField(MapExpression mapExpression) {
-        return A.NODES
-            .field('carbonConfig')
-            .type(Map)
-            .expression(mapExpression)
-            .build()
     }
 }

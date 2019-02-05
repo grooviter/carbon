@@ -14,6 +14,7 @@ import org.zeroturnaround.zip.ZipUtil
  *
  * @since 0.2.0
  */
+@SuppressWarnings('UnusedMethodParameter')
 class LocalFileFeature {
 
     /**
@@ -37,11 +38,11 @@ class LocalFileFeature {
      * Deletes files matching the path pattern
      *
      * @param script Carbon script
-     * @param pathPattern pattern to locate files to delete
+     * @param path pattern to locate files to delete
      * @since 0.2.0
      */
-    static void delete(CarbonScript script, String pathPattern) {
-        parsePathPattern(pathPattern).each { String file ->
+    static void delete(CarbonScript script, String path) {
+        parsePathPattern(path).each { String file ->
             Files.deleteIfExists(Paths.get(file))
         }
     }
@@ -50,12 +51,12 @@ class LocalFileFeature {
      * Moves files matching the path pattern
      *
      * @param script Carbon script
-     * @param fromPattern pattern to locate files to move
+     * @param from pattern to locate files to move
      * @param to place to move the files to
      * @since 0.2.0
      */
-    static void mv(CarbonScript script, String fromPattern , String to) {
-        parsePathPattern(fromPattern).each { String file ->
+    static void mv(CarbonScript script, String from , String to) {
+        parsePathPattern(from).each { String file ->
             Files.move(Paths.get(file), Paths.get(to), StandardCopyOption.REPLACE_EXISTING)
         }
     }
@@ -64,7 +65,7 @@ class LocalFileFeature {
      * Lists all files within a path
      *
      * @param script Carbon script
-     * @param path exact path of a directory to list its files
+     * @param path pattern to list files
      * @return an array of {@link File} type
      * @since 0.2.0
      */
@@ -76,12 +77,12 @@ class LocalFileFeature {
      * Copies files matching path pattern
      *
      * @param script Carbon script
-     * @param fromPattern pattern to locate files to copy
+     * @param from pattern to locate files to copy
      * @param to place to copy files to
      * @since 0.2.0
      */
-    static void cp(CarbonScript script, String fromPattern, String to) {
-        parsePathPattern(fromPattern).each { String file ->
+    static void cp(CarbonScript script, String from, String to) {
+        parsePathPattern(from).each { String file ->
             Files.copy(Paths.get(file), Paths.get(to), StandardCopyOption.REPLACE_EXISTING)
         }
     }
@@ -112,8 +113,8 @@ class LocalFileFeature {
 
     private static String[] parsePathPattern(String patternPath) {
         DirectoryScanner scanner = new DirectoryScanner()
-        scanner.setIncludes([patternPath] as String[])
-        scanner.setCaseSensitive(true)
+        scanner.includes = [patternPath] as String[]
+        scanner.caseSensitive = true
         scanner.scan()
 
         return scanner.includedFiles

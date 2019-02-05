@@ -8,6 +8,7 @@ import carbon.ast.CarbonScript
  *
  * @since 0.2.0
  */
+@SuppressWarnings('UnusedMethodParameter')
 class WatchFeature {
 
     /**

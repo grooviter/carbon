@@ -11,6 +11,7 @@ import picocli.groovy.PicocliBaseScript
  *
  * @since 0.2.0
  */
+@SuppressWarnings('AbstractClassWithoutAbstractMethod')
 abstract class CarbonScript extends PicocliBaseScript {
 
     /**
@@ -19,9 +20,12 @@ abstract class CarbonScript extends PicocliBaseScript {
      * @since 0.2.0
      */
     @Delegate
+    @SuppressWarnings('LoggerWithWrongModifiers')
     Logger log = LoggerFactory.getLogger('CarbonScript')
 
     /**
+     * Carbon configuration
+     *
      * @since 0.2.0
      */
     Map<String, ?> carbonConfig

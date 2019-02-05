@@ -8,11 +8,13 @@ import org.fusesource.jansi.Ansi
  *
  * @since 0.2.0
  */
+@SuppressWarnings('UnusedMethodParameter')
 class AnsiFeature {
 
     private static final Integer BEGINNING = 9999
     private static final Integer PADDING = 30
     private static final String PIPE = '|'
+    private static final String NEW_LINE = '\n'
 
     /**
      * Creates an instance of an {@link Ansi} type
@@ -57,13 +59,13 @@ class AnsiFeature {
                     .collect { k -> m[k].toString().take(PADDING).padRight(PADDING) }.join(PIPE)
 
             return row
-        }.join('\n')
+        }.join(NEW_LINE)
 
         StringBuilder builder = new StringBuilder()
             .append(headers)
-            .append('\n')
+            .append(NEW_LINE)
             .append(headersLine)
-            .append('\n')
+            .append(NEW_LINE)
             .append(dataRows)
 
         return Ansi.ansi().render(builder.toString())
