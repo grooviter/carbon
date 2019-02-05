@@ -16,7 +16,7 @@ class WatchFeature {
      * @param script the Carbon script
      * @param sleep time to wait until next execution
      * @param block code to execute
-     * @since 0.1.5
+     * @since 0.2.0
      */
     static void watch(CarbonScript script, Integer sleep, Closure<Void> block) {
         while (true) {
@@ -30,7 +30,7 @@ class WatchFeature {
      *
      * @param script the Carbon script
      * @param block code to execute
-     * @since 0.1.5
+     * @since 0.2.0
      */
     static void watch(CarbonScript script, Closure<Void> block) {
         while (true) {

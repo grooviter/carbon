@@ -15,7 +15,7 @@ class AnsiFeature {
     private static final String PIPE = '|'
 
     /**
-     * Creates an instance of a {@link Ansi} type
+     * Creates an instance of an {@link Ansi} type
      *
      * @param script the Carbon script instance
      * @return an instance of type {@link Ansi}
@@ -26,6 +26,8 @@ class AnsiFeature {
     }
 
     /**
+     * Creates an instance of an {@link Ansi} type
+     *
      * @param script the Carbon script
      * @param message
      * @return an instance of type {@link Ansi}*
@@ -36,9 +38,12 @@ class AnsiFeature {
     }
 
     /**
+     * Creates the output for a tabular-like data. It resembles
+     * the output from some database console clients.
+     *
      * @param script the Carbon script
-     * @param rows
-     * @return an instance of type {@link Ansi}**
+     * @param rows the tabular data
+     * @return an instance of type {@link Ansi}
      * @since 0.2.0
      */
     static Ansi ansi(CarbonScript script, List<Map<String, ?>> rows) {
@@ -65,8 +70,10 @@ class AnsiFeature {
     }
 
     /**
+     * Creates the output needed to clear the console
+     *
      * @param script the Carbon script
-     * @return an instance of type {@link Ansi}***
+     * @return an instance of type {@link Ansi}
      * @since 0.2.0
      */
     static Ansi clear(CarbonScript script) {
