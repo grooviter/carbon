@@ -50,16 +50,16 @@ class AnsiFeature {
      */
     static Ansi ansi(CarbonScript script, List<Map<String, ?>> rows) {
         Integer columns = rows.first().keySet().size()
-        Set<String> knames = rows.first().keySet()
-        String headers = knames*.center(PADDING).join(PIPE)
-        String headersLine =  (1..columns).collect({ ('-' * PADDING) }).join('+')
-        String dataRows = rows.collect { Map m ->
-            String row = m
-                    .keySet()
-                    .collect { k -> m[k].toString().take(PADDING).padRight(PADDING) }.join(PIPE)
+        Set<String> columnNames = rows.first().keySet()
+        String headers = columnNames*.center(PADDING).join(PIPE)
 
-            return row
-        }.join(NEW_LINE)
+        String headersLine =  (1..columns)
+            .collect({ '-' * PADDING })
+            .join('+')
+
+        String dataRows = rows
+            .collect(AnsiFeature.&processRow)
+            .join(NEW_LINE)
 
         StringBuilder builder = new StringBuilder()
             .append(headers)
@@ -84,5 +84,12 @@ class AnsiFeature {
             .cursorUp(BEGINNING)
             .cursorLeft(BEGINNING)
             .eraseScreen()
+    }
+
+    private String processRow(Map<String,?> rowToProcess) {
+        return rowToProcess
+                .keySet()
+                .collect { k -> rowToProcess[k].toString().take(PADDING).padRight(PADDING) }
+                .join(PIPE)
     }
 }
