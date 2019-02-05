@@ -1,6 +1,7 @@
 package carbon.ast
 
 import carbon.ast.config.ConfigurationBuilder
+import carbon.ast.visitor.AddConfigToScriptVisitor
 import carbon.ast.visitor.PicocliCommandVisitor
 import carbon.ast.visitor.PicocliOptsVisitor
 import carbon.ast.visitor.PicocliParamsVisitor
@@ -69,6 +70,7 @@ class CarbonASTTransformation extends AbstractASTTransformation {
                 new PicocliParamsVisitor(methodNode, it).visit()
                 new PicocliScriptVisitor(classNode, it).visit()
                 new PicocliCommandVisitor(classNode, it).visit()
+                new AddConfigToScriptVisitor(classNode, it).visit()
 
                 PicocliVisitorUtils.visitAndResetVariableScopes(classNode, sourceUnit)
             }

@@ -26,9 +26,9 @@ class AnsiFeature {
     }
 
     /**
-     * @param script
+     * @param script the Carbon script
      * @param message
-     * @return
+     * @return an instance of type {@link Ansi}*
      * @since 0.2.0
      */
     static Ansi ansi(CarbonScript script, String message) {
@@ -36,9 +36,9 @@ class AnsiFeature {
     }
 
     /**
-     * @param script
+     * @param script the Carbon script
      * @param rows
-     * @return
+     * @return an instance of type {@link Ansi}**
      * @since 0.2.0
      */
     static Ansi ansi(CarbonScript script, List<Map<String, ?>> rows) {
@@ -62,5 +62,18 @@ class AnsiFeature {
             .append(dataRows)
 
         return Ansi.ansi().render(builder.toString())
+    }
+
+    /**
+     * @param script the Carbon script
+     * @return an instance of type {@link Ansi}***
+     * @since 0.2.0
+     */
+    static Ansi clear(CarbonScript script) {
+        return Ansi
+            .ansi()
+            .cursorUp(BEGINNING)
+            .cursorLeft(BEGINNING)
+            .eraseScreen()
     }
 }

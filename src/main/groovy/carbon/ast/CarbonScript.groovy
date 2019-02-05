@@ -20,4 +20,9 @@ abstract class CarbonScript extends PicocliBaseScript {
      */
     @Delegate
     Logger log = LoggerFactory.getLogger('CarbonScript')
+
+    /**
+     * @since 0.2.0
+     */
+    Map<String, ?> carbonConfig
 }
