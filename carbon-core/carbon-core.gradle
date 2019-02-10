@@ -1,0 +1,93 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
+apply plugin: 'codenarc'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile("com.github.grooviter:asteroid:$asteroid") {
+        exclude module: "groovy-all"
+        exclude module: "groovy"
+    }
+    compile "org.codehaus.groovy:groovy:$groovy_all"
+    compile "org.codehaus.groovy:groovy-ant:$groovy_all"
+    compile "org.codehaus.groovy:groovy-sql:$groovy_all"
+    compile "org.codehaus.groovy:groovy-macro:$groovy_all"
+    compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
+    compile "org.slf4j:slf4j-api:1.7.25"
+    compile "org.fusesource.jansi:jansi:$jansiVersion"
+
+    testCompile "com.h2database:h2:$h2"
+    testCompile "org.spockframework:spock-core:$spock_core"
+    testCompile("com.github.grooviter:asteroid:$asteroid") {
+        exclude module: "groovy-all"
+        exclude module: "groovy"
+    }
+}
+
+jacoco {
+ toolVersion = "0.8.1"
+}
+
+codenarc {
+    configFile file('src/main/codenarc/config.groovy')
+    toolVersion "1.2"
+}
+
+publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            groupId    releaseGroup
+            artifactId 'carbon-core'
+            version    releaseVersion
+
+            from components.java
+        }
+    }
+}
+
+bintray {
+ /* Normally taken from ~/.gradle/gradle.properties */
+    user         = project.properties.bintrayUser
+    key          = project.properties.bintrayKey
+    publish      = false
+    publications = ['mavenCustom']
+    pkg {
+        repo            = 'maven'
+        name            = 'carbon-core'
+        userOrg         = 'grooviter'
+        desc            =  releaseDesc
+        websiteUrl      = 'http://grooviter.github.io/carbon/'
+        issueTrackerUrl = 'https://github.com/grooviter/carbon/issues'
+        licenses        = ['Apache-2.0']
+        vcsUrl          = 'https://github.com/grooviter/carbon.git'
+        labels          = ['groovy', 'ast']
+        version {
+            name      = releaseVersion
+            desc      = 'Carbon Release'
+            released  = new Date()
+            vcsTag    = releaseVersion
+        }
+    }
+}
+
+task('console', dependsOn:'classes', type: JavaExec) {
+    group = 'help'
+    description 'starts a Groovy console with the classpath of the current project'
+    main='groovy.ui.Console'
+    project.dependencies.add("compile", "org.codehaus.groovy:groovy-console:$groovy_all")
+    classpath = sourceSets.main.runtimeClasspath
+}

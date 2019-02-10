@@ -1,0 +1,23 @@
+== Overview
+
+Carbon provides a series of features to a Groovy script by using a declarative style and some conventions.
+
+=== Motivation
+
+After writing a certain amount of Groovy scripts, I've found out that:
+
+- *There's no time to document scripts*, not even for usage hint
+- Many of them are *repeating code*, specially when handling the configuration
+- They *lack common logging* configuration
+- *Ansi output* sometimes is necessary to make scripts friendlier
+- Scripts connecting *databases* could be even shorter
+- *Certain conventions* would help to create and maintain scripts
+
+Even with the Groovy CLI builder I saw myself repeating a lot of code, and that's why I started thinking
+on creating Carbon.
+
+=== Picocli FTW
+
+Nothing of what Carbon is would be possible without the use of the amazing https://picocli.info/[Picocli] library.
+And of course if you're trying to create scripts with any language of the JVM I'd strongly
+recommend you to give it a try.

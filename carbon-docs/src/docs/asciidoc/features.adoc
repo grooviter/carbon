@@ -1,0 +1,180 @@
+== Features
+
+When writing shell scripts There're a lot of tasks that require to
+repeat the same code over and over again. Carbon scripts by default
+contain a set of basic features that try to help developer to deal
+with such common tasks.
+
+=== Basic features
+
+The basic features included by default include functions:
+
+- To deal with files (cp, mv, ls...)
+- To Support for serious logging
+- To access databases (specially dealing with db config)
+- To Highight some output to the console (use ansi colors)
+- To watch  certain conditions every certain seconds
+- To pipe content to scripts
+- ... etc
+
+==== Local files
+
+There're plenty of scenarios where we find ourselves, copying, moving
+or deleting files right ? Thankfully Groovy already has an integration
+with Apache Ant which covers most of the operation that we may require
+for handling with local files.
+
+[source, groovy]
+.sync dirs
+----
+include::{examples}/files/sync.groovy[indent=0]
+----
+
+<1> Using Groovy's AntBuilder to handle local file operations
+
+Then you can sync two different directories every 5 seconds:
+
+[source, shell]
+.command execution
+----
+./sync.groovy --from /tmp/from --to /tmp/to --interval 5
+----
+
+NOTE: You can check out more about Groovy's AntBuilder in the
+http://docs.groovy-lang.org/latest/html/documentation/ant-builder.html[official
+documentation]
+
+==== Logging
+
+Normally shell scripts will print out to the stdout, stderr but,
+sometimes we may also want to format the logging output in a more
+structured way, or send the logging to a remote server, or store it in
+a database. Carbon includes https://www.slf4j.org[Slf4j] by default to
+provide a more robust logging system.
+
+[source, groovy]
+----
+
+----
+
+==== Sql
+
+Sometimes we need to execute database queries periodically to retrieve
+some specific information. And it would be nice to have a script to do
+that for us. Although Groovy already has a really minimal footprint to
+access relational databases, Carbon goes one step further and adds
+some conventions to make it even shorter.
+
+The convention consist in retrieving the required database
+configuration from Carbon's configuration.
+
+[source, groovy]
+.default execution
+----
+
+----
+
+Of course nothing prevents you from storing your configuration in
+another key:
+
+[source, groovy]
+.custom configuration key
+----
+
+----
+
+==== Ansi
+
+"Console is boring"
+-- Heard somewhere from someone
+
+It's true that shell scripting can be boring sometimes: same colors,
+one line after another. But that could change by using ansi colors.
+
+==== Watch
+
+Have you ever needed a script to watch for a certain value ? The
+*watch* function is very common in databases, for example to execute a
+certain query every *n* seconds. Here you have a very simple example
+which shows the system date every few seconds.
+
+[source, groovy]
+.watch time
+----
+include::{examples}/watch/show-date.groovy[indent=0]
+----
+
+==== Pipes
+
+One of the wonders of shell scripting is using pipes. Pipes allow you
+to communicate the output from a given script to the input of
+another. For example the following bash example sends the output of an
+echo execution as the content of a file:
+
+[source, shell]
+.writing to a file
+----
+echo "Hello Groovy" > hello.txt
+----
+
+==== hasPipeIn() & pipeIn()
+
+NOTE: Inspired in
+https://blog.nevercodealone.de/groovy-shell-scripting-pipes-und-fifos-teil-2/
+
+Following this principle I'm writing a Groovy script which can count
+words either from a string parameter or from the piped content from
+another script.
+
+[source, groovy]
+----
+include::{examples}/pipes/count-words.groovy[indent=0]
+----
+
+<1> Defining the input parameter as a String
+<2> Because the piped content is not a parameter, we need to consider
+not receiving any parameter
+<3> The `hashPipedIn()` method ask if there's any content available in the pipe
+<4> If there's input we'll deal with it
+<5> If there's no input but there's piped content, we'll deal with the piped content
+<6> To get the piped content as a `java.util.Stream<String>` we use `pipedIn()` method
+<7> If there's neither input parameter nor piped content we show the help message
+
+From now on I could count words from a given string parameter:
+
+[source, shell]
+.from parameter
+----
+./count-words.groovy "count words from parameter"
+----
+
+Or from the output of a given file:
+
+[source, shell]
+.from pipe (1)
+----
+./count-words.groovy < README.md
+----
+
+Or piping the output of the execution of a previous command:
+
+[source, shell]
+.from pipe (2)
+----
+cat README.md | ./count_words.groovy
+----
+
+=== How to add more features
+
+At the moment Carbon features are just functions added to a Groovy's
+extension module. That extension module functions are based on the
+idea that every function has access to the context of a
+*carbon.ast.CarbonScript` instance.
+
+If you'd like to add more features to your Carbon scripts you only
+have to create another extension module and all the functions should
+extend the functionality of the CarbonScript.
+
+NOTE: More information about how to create an extension module in the
+http://groovy-lang.org/metaprogramming.html#_extension_modules[Groovy
+official documentation]

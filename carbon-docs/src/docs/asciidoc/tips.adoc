@@ -1,0 +1,49 @@
+== Script tips
+
+This section tries to show some tips to
+
+=== Executable scripts
+
+If you would like to make your script executable without having to use
+groovy to invoke your script.
+
+[source, shell]
+.rename script
+[source, groovy]
+----
+#!/usr/bin/env groovy // <1>
+
+@Grab('com.github.grooviter:carbon-core:0.2.0')
+@Grab('org.slf4j:slf4j-simple:1.7.25')
+
+carbon = [
+...
+]
+----
+
+<1> *shebang*: tells the system which interpreter to use to execute
+the script. In this case of course, is telling the system to use
+groovy to execute the script.
+
+NOTE: More about shebang at
+https://en.wikipedia.org/wiki/Shebang_(Unix)[Wikipedia]
+
+[source, shell]
+.rename script
+----
+mv gss.groovy gss
+----
+
+[source, shell]
+.make it executable
+----
+chmod +x gss
+----
+
+Finally you can execute the script by just invoking it:
+
+[source, shell]
+----
+[user@host]$ ./gss --help
+
+----

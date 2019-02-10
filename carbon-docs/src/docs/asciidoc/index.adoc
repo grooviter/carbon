@@ -1,0 +1,32 @@
+= Carbon
+:revnumber: {releaseVersion}
+:numbered:
+:imagesDir: images/
+:baseDir: ../../../..
+:baseDirFirstLevel: ../../../..
+:stem:
+
+:core: {baseDir}/carbon-core
+:examples: {baseDir}/carbon-examples
+:coreMain: {core}/src/main/java
+:testMain: {core}/src/test/groovy
+:testResources: {core}/src/test/resources
+
+[quote]
+Carbon is a library created to enhance your Groovy scripts
+
+[sidebar]
+.Apache
+****
+The *Carbon* project is open sourced under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 License].
+****
+
+include::overview.adoc[]
+
+include::getting.adoc[]
+
+include::configuration.adoc[]
+
+include::features.adoc[]
+
+include::tips.adoc[]

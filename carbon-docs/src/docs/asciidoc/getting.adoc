@@ -1,0 +1,62 @@
+== Getting started
+
+=== Hello Carbon
+
+Lets start with a minimal **Carbon** example. Create a Groovy script file
+with the following content:
+
+[source, groovy]
+.hello-world.groovy
+----
+include::{examples}/hello-world/hello-world.groovy[indent=0]
+----
+
+<1> Carbon core *dependency* (required)
+<2> Carbon script *configuration*
+<3> *Your code* as usual
+
+The script configuration is declared using the *carbon* variable which receives a map containing:
+
+- *name*: The name of the script
+- *version*: The current version of the script
+- *description*: What's the script about
+- *params*: The scripts declares that it should receive a parameter labelled *NAME* only once,
+and also that it should be available in the script code as a *name* variable.
+Now if you execute the script forgetting about adding the name:
+
+[source, shell]
+.without name
+----
+groovy hello-world.groovy
+----
+
+You'd get the following output:
+
+[source, shell]
+.usage
+----
+args: []
+Missing required parameter: NAME
+Usage: hello-world [-hV] NAME
+Carbon says Hello Groovy to the NAME!
+      NAME        Your name
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+----
+
+Apparently we're missing the parameter NAME right after invoking the script.
+Therefore if we execute:
+
+[source, shell]
+.with name
+----
+groovy hello-world.groovy Mario
+----
+
+We should get:
+
+[source, shell]
+.output
+----
+[main] INFO CarbonScript - Hello Mario from Carbon
+----

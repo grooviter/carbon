@@ -1,3 +1,0 @@
-moduleName=BasicFeatures
-moduleVersion=0.2.0
-extensionClasses=carbon.ast.feature.WatchFeature,carbon.ast.feature.LocalFileFeature,carbon.ast.feature.AnsiFeature,carbon.ast.feature.SqlFeature

@@ -1,0 +1,158 @@
+== Configuration
+
+The most important part of a Carbon script is the configuration. The
+configuration is declared as a variable called *carbon*. The
+information found in that variable is used to build the Carbon script.
+
+[source, groovy]
+.configuration elements
+----
+carbon = [
+   name: 'Script name',                // <1>
+   version: '0.1.0',                   // <2>
+   description: 'Script description',  // <3>
+   options: [:],                       // <4>
+   params: [:]                         // <5>
+   configuration: '/path/to/external-configuration.groovy' // <6>
+]
+----
+
+<1> Name of the script
+<2> Current version of the script
+<3> A description describing what the script is about
+<4> Script options
+<5> Script parameters
+<6> External configuration
+
+=== Basic properties
+
+The basic properties of a Carbon script are:
+
+- name
+- version
+- description
+
+These properties are supposed to be required. This tries to force the
+developer to at least say what the script is about, and what is the
+current version of the script.
+
+=== Options & Parameters
+
+Following Picocli's explanation about options and parameters:
+
+"Command line arguments can be separated into options and positional
+parameters. Options have a name, positional parameters are usually the
+values that follow the options, but they may be mixed."
+-- Picocli 'Options and Parameters' section
+
+==== Options
+
+Options have a name, and normally are used to modify somehow the
+behavior or the output of the script. Some examples are:
+
+[source, shell]
+----
+hello-world --help       // shows hello-world help
+show-stocks --refresh 5  // refresh stocks every 5 seconds
+migrate --from a --to b  // migrates table a to table b
+backup --verbose         // executes backup logging everything
+----
+
+===== Required
+
+When declaring an option if it doesn't have a default value
+
+===== Default value
+
+For instance, lets create a script showing us the current date:
+
+[source, groovy]
+----
+include::{examples}/datetime/datetime.groovy[indent=0]
+----
+
+<1> The key of the map entry is the name of the parameter
+<2> *type*: The type of the parameter
+<3> *description*: What is the parameter for
+<4> *defaultValue*: If the user doesn't provide any. In this case we
+include the default value in the description
+<5> Then you can use the *format* parameter in your code
+
+IMPORTANT: Notice that in the option description when including the
+default value we're using simple quotes. *${DEFAULT-VALUE}* doesn't
+exists in the script. The description string is used as a template by
+Picocli when rendering the description.
+
+If you execute:
+
+[source, shell]
+----
+groovy datetime.groovy --help
+----
+
+You can see the options in the help output:
+
+[source, shell]
+----
+Usage: datetime [-hV] [-f=<format>]
+shows current date with the format
+  -f, --format=<format>   Date format (dd/MM/yyyy HH:mm:ss)
+  -h, --help              Show this help message and exit.
+  -V, --version           Print version information and exit.
+----
+
+Now that we know the available options lets get the current time with
+a custom format:
+
+[source, shell]
+.datetime with day and month
+----
+[user@host]$ groovy datetime.groovy --format dd/MM
+08/02
+----
+
+==== Parameters
+
+There're multiple scripts operating over the files passed as
+parameters. For instance you may want to hash a given set of files in
+order to make sure they haven't been tampered. Such script may well
+look like this:
+
+[source, groovy]
+----
+include::{examples}/files/hash-files.groovy[indent=0]
+----
+
+<1> The script is declaring a parameter named *files* which has arity
+*1* meaning all parameters from position 1 are files considered to be
+hashed.
+
+In general parameters in Carbon should be a new map entry in the
+
+[source, groovy]
+----
+carbon = [
+    params: [
+       name: [
+           type: String,        // <1>
+           arity: "1",          // <2>
+           description: "",     // <3>
+           paramLabel: "NAME"   // <4>
+       ]
+    ]
+]
+----
+
+=== External configuration
+
+TODO as extra configuration and moving configuration away
+
+[source, groovy]
+.externalizing configuration completely
+----
+carbon = '/path/to/config.groovy'
+----
+
+=== Access from code
+
+TODO
