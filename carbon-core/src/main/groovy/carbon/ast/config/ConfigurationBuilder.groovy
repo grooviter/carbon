@@ -21,6 +21,8 @@ import groovy.util.logging.Log
 @SuppressWarnings('UnusedPrivateMethodParameter')
 class ConfigurationBuilder {
 
+    private static final Map<String,?> DEFAULT_VALUES = [configuration:'']
+
     /**
      * {@link Expression} containing the Carbon configuration
      *
@@ -38,9 +40,9 @@ class ConfigurationBuilder {
     Map<String,?> build() {
         switch (expr) {
             case MapExpression:
-                return buildFromMap(expr)
+                return DEFAULT_VALUES + buildFromMap(expr)
             case ConstantExpression:
-                return buildFromString(expr)
+                return DEFAULT_VALUES + buildFromString(expr)
 
             default:
                 return [:] // config should be only either a map or a string
