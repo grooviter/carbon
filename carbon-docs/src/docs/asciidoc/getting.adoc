@@ -20,8 +20,30 @@ The script configuration is declared using the *carbon* variable which receives 
 - *name*: The name of the script
 - *version*: The current version of the script
 - *description*: What's the script about
+- *options*: You haven't declared any option, but by default a Carbon script has at least two options:
+version and help.
+
+Just check it out, execute:
+
+[source, shell]
+----
+groovy hello-world.groovy --help
+----
+
+And you'd be getting:
+
+[source, shell]
+----
+Usage: hello-world [-hV] NAME
+Carbon says Hello Groovy to the NAME!
+      NAME        Your name
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+----
+
 - *params*: The scripts declares that it should receive a parameter labelled *NAME* only once,
 and also that it should be available in the script code as a *name* variable.
+
 Now if you execute the script forgetting about adding the name:
 
 [source, shell]

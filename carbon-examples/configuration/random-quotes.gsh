@@ -2,11 +2,12 @@
 
 @Grab('com.github.grooviter:carbon-core:0.2.0')
 @Grab('org.slf4j:slf4j-simple:1.7.25')
+import static java.util.Collections.shuffle
 
 carbon = 'random-quotes-cfg.gsh'
 
-Map<String,?> config = configuration
+List<String> quotes = configuration.quotes as List<String>
 
-Collections.shuffle(config.quotes as List<String>)
+shuffle(quotes)
 
-println ansi(config.quotes.find())
+println ansi(quotes.find())

@@ -17,10 +17,10 @@ The basic features included by default include functions:
 - To pipe content to scripts
 - ... etc
 
-==== AntBuilder
+==== LocalFileFeature
 
-There're plenty of scenarios where we find ourselves, dealing with
-local files right ? Thankfully Groovy already has an integration with
+There're plenty of scenarios where we could find ourselves, dealing with
+local files right ? Among other functions Carbon already has an integration with
 Apache Ant which covers most of the operation that we may require when
 handling local files.
 

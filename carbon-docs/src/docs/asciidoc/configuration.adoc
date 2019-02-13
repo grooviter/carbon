@@ -13,7 +13,7 @@ carbon = [
    description: 'Script description',  // <3>
    options: [:],                       // <4>
    params: [:]                         // <5>
-   configuration: '/path/to/external-configuration.groovy' // <6>
+   configuration: '/path/to/external-configuration.yaml' // <6>
 ]
 ----
 
@@ -22,7 +22,7 @@ carbon = [
 <3> A description describing what the script is about
 <4> Script options
 <5> Script parameters
-<6> External configuration
+<6> Script specific configuration in a yaml file
 
 === Basic properties
 
@@ -168,7 +168,7 @@ carbon = [
 ]
 ----
 
-=== External configuration
+=== Externalize metadata
 
 At some point your script configuration maybe be a little bit bigger
 than you expected.
@@ -222,7 +222,28 @@ name = ''
 description = ''
 ----
 
-=== Access from code
+=== Externalize configuration
 
-When externalizing Carbon script's configuration to another file, you
-can access configuration as a map from your script.
+Any configuration data apart from script's metadata can be added to a
+yaml file, and then consumed from your script as a plain map.
+
+In order to achieve that, the path of that yaml file should be added
+as the value of the *configuration* property in the Carbon script's
+metadata.
+
+[source, groovy]
+.random.groovy
+----
+include::{examples}/configuration/random.gsh[indent=0]
+----
+
+<1> Setting external configuration path
+<2> Accessing the *configuration* variable
+
+And the yaml configuration file, is the following:
+
+[source, groovy]
+.random.yaml
+----
+include::{examples}/configuration/random.yaml[indent=0]
+----
