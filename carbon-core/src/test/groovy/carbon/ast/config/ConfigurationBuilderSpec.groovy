@@ -73,34 +73,4 @@ class ConfigurationBuilderSpec extends Specification {
         then: 'config should throw an exception'
         thrown(IllegalStateException)
     }
-
-    void 'Carbon\'s configuration from a MapEntryExpression with configuration'() {
-        given: 'a carbon expression'
-        MapExpression mapX = macro(CompilePhase.SEMANTIC_ANALYSIS) {
-            [
-                name:'simple-script',
-                version:'1.0.1',
-                configuration:'src/test/resources/carbon/ast/config/config.groovy',
-            ]
-        }
-
-        and: 'an instance of ConfigurationBuilder'
-        ConfigurationBuilder builder = new ConfigurationBuilder(mapX)
-
-        when: 'extracting the configuration'
-        Map<String, ?> config = builder.build()
-
-        then: 'some values are taken from config file'
-        config.description.contains 'MD2, MD5'
-
-        and: 'some others keep the value written in the code'
-        config.version     == '1.0.1'
-        config.name        == 'simple-script'
-
-        and: 'check nested values'
-        verifyAll(config) {
-            options.algorithm.defaultValue == 'MD5'
-            options.algorithm.type == String
-        }
-    }
 }
