@@ -3,6 +3,7 @@ package carbon.ast.config
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.ClassExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.expr.ListExpression
 import org.codehaus.groovy.ast.expr.MapExpression
 import org.codehaus.groovy.ast.expr.MapEntryExpression
 import groovy.transform.TailRecursive
@@ -19,8 +20,6 @@ import groovy.util.logging.Log
 @TupleConstructor
 @SuppressWarnings('UnusedPrivateMethodParameter')
 class ConfigurationBuilder {
-
-    static final String KEY_CONFIGURATION = 'configuration'
 
     /**
      * {@link Expression} containing the Carbon configuration
@@ -52,13 +51,6 @@ class ConfigurationBuilder {
         List<MapEntryExpression> mapEntryXList = mapExpression.mapEntryExpressions
         Map<String,?> config = buildFromMap(mapEntryXList)
 
-        if (config.configuration) {
-            Map<String, ?> merged = config.configuration + config
-            merged.remove(KEY_CONFIGURATION)
-
-            return merged
-        }
-
         return config
     }
 
@@ -80,10 +72,6 @@ class ConfigurationBuilder {
     }
 
     private Object resolveEntryValue(String key, ConstantExpression entry) {
-        if (key == KEY_CONFIGURATION) {
-            return buildFromString(entry)
-        }
-
         return entry.value
     }
 
@@ -93,6 +81,10 @@ class ConfigurationBuilder {
 
     private Object resolveEntryValue(String key, MapExpression entry) {
         return buildFromMap(entry.mapEntryExpressions)
+    }
+
+    private Object resolveEntryValue(String key, ListExpression entry) {
+        return entry.expressions*.value
     }
 
     private Object resolveEntryValue(String key, Expression entry) {

@@ -60,7 +60,32 @@ backup --verbose         // executes backup logging everything
 
 ===== Required
 
-When declaring an option if it doesn't have a default value
+If you declare an option as *required* if it didn't have value the
+script will show an error and the usage output.
+
+[source, groovy]
+----
+include::{examples}/files/sync.groovy[indent=0]
+----
+
+In this example the *from* and *to* options are required. If we do not
+provide values for them we'll get the following output:
+
+[source, shell]
+----
+args: []
+Missing required options [--from=<from>, --to=<to>]
+Usage: sync [-hV] -f=<from> [-i=<interval>] -t=<to>
+Copies new files from source dir to destination dir
+  -f, --from=<from>   Source directory
+  -h, --help          Show this help message and exit.
+  -i, --interval=<interval>
+                      Seconds to wait
+  -t, --to=<to>       Destination directory
+  -V, --version       Print version information and exit.
+----
+
+It's telling you that both options are missing.
 
 ===== Default value
 
@@ -145,14 +170,59 @@ carbon = [
 
 === External configuration
 
-TODO as extra configuration and moving configuration away
+At some point your script configuration maybe be a little bit bigger
+than you expected.
 
 [source, groovy]
-.externalizing configuration completely
+.Script with configuration
+-----
+include::{examples}/configuration/sync_big.groovy[indent=0]
+-----
+
+There're more lines about configuration than the task we try to
+achieve. It's a lot of noise. Wouldn't be nice to move all that
+configuration stuff somewhere else ? What about this:
+
+[source, groovy]
+.script with external configuration
 ----
-carbon = '/path/to/config.groovy'
+include::{examples}/configuration/sync.groovy[indent=0]
+----
+
+<1> Path to Carbon configuration
+
+Perfect! Now we can see clearly the script is doing, and move all the
+script related configuration to another file:
+
+[source, groovy]
+.sync_config.groovy
+----
+include::{examples}/configuration/sync_config.groovy[indent=0]
+----
+
+It's important to notice that whereas when adding the carbon
+configuration within the same script requires to use the *carbon*
+variable and use a map object, when using an external configuration
+file, all configuration properties should appear outside the carbon
+variable.
+
+[source, groovy]
+.included in script
+----
+carbon = [
+ name: '',
+ description: ''
+]
+----
+
+[source, groovy]
+.external config
+----
+name = ''
+description = ''
 ----
 
 === Access from code
 
-TODO
+When externalizing Carbon script's configuration to another file, you
+can access configuration as a map from your script.

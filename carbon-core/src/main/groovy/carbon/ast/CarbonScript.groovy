@@ -24,10 +24,12 @@ abstract class CarbonScript extends PicocliBaseScript {
     Logger log = LoggerFactory.getLogger('CarbonScript')
 
     /**
-     * Returns the full Carbon configuration
+     * Returns the content of the configuration path
+     * provided in the carbon variable
      *
-     * @return the Carbon configuration
+     * @return an instance of {@link Map} containing provided
+     * configuration
      * @since 0.2.0
      */
-    abstract Map<String, ?> getCarbonConfig()
+    abstract Map<String, ?> getConfiguration()
 }

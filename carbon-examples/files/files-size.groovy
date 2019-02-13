@@ -13,5 +13,5 @@ carbon = [
 ]
 
 files.each { File file ->
-    info "${file.name} \t ${fileSize(file)}"
+    info ansi("@|yellow ${file.name}|@ \t @|green ${fileSize(file)}|@")
 }

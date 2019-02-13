@@ -36,7 +36,7 @@ class SqlFeature {
      * @since 0.2.0
      */
     static Sql sql(CarbonScript script, String key) {
-        Map<String,?> sqlConfig = script.carbonConfig[key]
+        Map<String,?> sqlConfig = script.configuration[key] as Map<String,?>
 
         if (!sqlConfig) {
             throw new IllegalStateException("There's no database configuration under key '$key'")

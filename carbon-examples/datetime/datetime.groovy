@@ -11,7 +11,7 @@ carbon = [
             description: 'Date format (${DEFAULT-VALUE})', // <3>
             defaultValue: 'dd/MM/yyyy HH:mm:ss'            // <4>
         ]
-    ]
+    ]'
 ]
 
 println new Date().format(format) // <5>

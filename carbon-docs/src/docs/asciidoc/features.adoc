@@ -17,12 +17,12 @@ The basic features included by default include functions:
 - To pipe content to scripts
 - ... etc
 
-==== Local files
+==== AntBuilder
 
-There're plenty of scenarios where we find ourselves, copying, moving
-or deleting files right ? Thankfully Groovy already has an integration
-with Apache Ant which covers most of the operation that we may require
-for handling with local files.
+There're plenty of scenarios where we find ourselves, dealing with
+local files right ? Thankfully Groovy already has an integration with
+Apache Ant which covers most of the operation that we may require when
+handling local files.
 
 [source, groovy]
 .sync dirs
@@ -54,8 +54,12 @@ provide a more robust logging system.
 
 [source, groovy]
 ----
-
+include::{examples}/logging/lines.groovy[indent=0]
 ----
+
+<1> Info message
+<2> Debug message
+<3> Error message
 
 ==== Sql
 
@@ -71,16 +75,13 @@ configuration from Carbon's configuration.
 [source, groovy]
 .default execution
 ----
-
+include::{examples}/sql/h2-test.gsh[indent=0]
 ----
-
-Of course nothing prevents you from storing your configuration in
-another key:
 
 [source, groovy]
-.custom configuration key
+.External configuration
 ----
-
+include::{examples}/sql/h2-test.yaml[indent=0]
 ----
 
 ==== Ansi
@@ -90,6 +91,38 @@ another key:
 
 It's true that shell scripting can be boring sometimes: same colors,
 one line after another. But that could change by using ansi colors.
+In order to use some ansi colors when writing to the console you can
+use the method *ansi()* available in any Carbon script:
+
+[source, groovy]
+.ansi
+----
+include::{examples}/ansi/ansi-test.gsh[indent=0]
+----
+
+<1> Clears the console
+<2> Shows a black underlined text with yellow background
+<3> Capital letters in bold and in yellow
+<4> A banner blinking slowly
+
+Using the pattern *@|color text|@* you can color any text you want
+when logging your app.
+
+And of course, you can use ansi colors in your script
+configuration. The following example has a banner in its header, How
+cool is that ?
+
+[source, groovy]
+.Script
+----
+include::{examples}/ansi/banner.gsh[indent=0]
+----
+
+A[source, groovy]
+.Script configuration with banner in header
+----
+include::{examples}/ansi/banner-cfg.groovy[indent=0]
+----
 
 ==== Watch
 

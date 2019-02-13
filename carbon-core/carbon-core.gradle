@@ -22,11 +22,13 @@ dependencies {
         exclude module: "groovy-all"
         exclude module: "groovy"
     }
+    compile "org.codehaus.groovy:groovy-sql:$groovy_all"
+
     compile "org.codehaus.groovy:groovy:$groovy_all"
     compile "org.codehaus.groovy:groovy-ant:$groovy_all"
-    compile "org.codehaus.groovy:groovy-sql:$groovy_all"
     compile "org.codehaus.groovy:groovy-macro:$groovy_all"
     compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
+    compile "org.yaml:snakeyaml:1.18"
     compile "org.slf4j:slf4j-api:1.7.25"
     compile "org.fusesource.jansi:jansi:$jansiVersion"
 

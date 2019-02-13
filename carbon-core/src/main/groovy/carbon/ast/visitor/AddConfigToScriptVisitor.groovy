@@ -1,25 +1,25 @@
 package carbon.ast.visitor
 
 import asteroid.A
-import carbon.ast.CarbonScript
 import carbon.ast.CarbonASTTransformation
-import groovy.transform.TailRecursive
+import carbon.ast.CarbonScript
 import groovy.transform.TupleConstructor
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.ast.expr.MapEntryExpression
-import org.codehaus.groovy.ast.expr.MapExpression
+import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.stmt.Statement
+import org.codehaus.groovy.control.CompilePhase
 
 /**
  * Makes available full Carbon configuration as the implementation
- * for the {@link CarbonScript#getCarbonConfig}
+ * for the {@link CarbonScript#getConfiguration}
  *
  * @since 0.2.0
  */
 @TupleConstructor
 class AddConfigToScriptVisitor {
 
-    private static final String METHOD_NAME = 'getCarbonConfig'
+    private static final String METHOD_NAME = 'getConfiguration'
 
     /**
      * {@link ClassNode} to add the Carbon configuration as new field
@@ -41,51 +41,46 @@ class AddConfigToScriptVisitor {
      * @since 0.2.0
      */
     void visit() {
+        Boolean hasMethodAlready = classNode.methods.find { it.name == METHOD_NAME }
+        String configuration = carbonConfig.configuration
+
         // Don't add in case method has been implemented already
-        if (classNode.methods.find { it.name == METHOD_NAME }) {
+        if (hasMethodAlready) {
             return
         }
 
-        Set<Map.Entry<String,?>> entries = carbonConfig.entrySet()
-        MapExpression carbonConfigX = buildMapX(entries)
-        MethodNode methodNode = createGetCarbonConfigMethod(carbonConfigX)
+        MethodNode methodNode = getMethodNode(configuration)
 
         A.UTIL.NODE.addGeneratedMethod(classNode, methodNode)
     }
 
-    @SuppressWarnings('FactoryMethodName')
-    private static MethodNode createGetCarbonConfigMethod(MapExpression mapExpression) {
+    private static MethodNode getMethodNode(String path) {
+        Statement loadYaml = getMethodCode(path)
+
         return A.NODES
             .method(METHOD_NAME)
             .modifiers(CarbonASTTransformation.ACC_PUBLIC)
             .returnType(Map)
-            .code(A.STMT.returnS(mapExpression))
+            .code(loadYaml)
             .build()
     }
 
-    @TailRecursive
-    @SuppressWarnings('FactoryMethodName')
-    private MapExpression buildMapX(Collection<Map.Entry<String,?>> entries, MapExpression acc = new MapExpression()) {
-        if (entries.isEmpty()) {
-            return acc
+    @SuppressWarnings('UnnecessaryPackageReference')
+    private static Statement getMethodCode(String path) {
+        ConstantExpression pathExpression = A.EXPR.constX(path)
+
+        if (path) {
+            return macro(CompilePhase.CONVERSION) {
+                return new org.yaml.snakeyaml.Yaml().load(
+                    new java.io.FileInputStream(
+                        new java.io.File($v { pathExpression })
+                    )
+                )
+            }
         }
 
-        Map.Entry<String,?> head = entries.head()
-        MapEntryExpression nextExpression = resolveEntry(head.key, head.value)
-        acc.addMapEntryExpression(nextExpression)
-
-        return buildMapX(entries.tail(), acc)
-    }
-
-    private MapEntryExpression resolveEntry(String key, Class clazz) {
-        return A.EXPR.mapEntryX(key, A.EXPR.classX(clazz))
-    }
-
-    private MapEntryExpression resolveEntry(String key, Map map) {
-        return A.EXPR.mapEntryX(key, buildMapX(map.entrySet()))
-    }
-
-    private MapEntryExpression resolveEntry(String key, Object value) {
-        return A.EXPR.mapEntryX(key, A.EXPR.constX(value))
+        return macro(CompilePhase.CONVERSION) {
+            return [:]
+        }
     }
 }
