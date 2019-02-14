@@ -1,8 +1,9 @@
 == Script tips
 
-This section tries to show some tips to
+This section tries to show some tips on how to integrate, and execute
+your Groovy scripts.
 
-=== Executable scripts
+=== Executable Scripts
 
 If you would like to make your script executable without having to use
 groovy to invoke your script.
@@ -47,3 +48,109 @@ Finally you can execute the script by just invoking it:
 [user@host]$ ./gss --help
 
 ----
+
+=== Use Pipes
+
+One of the nicest things about shell scripting is piping commands, make the output of one script to become the
+input of another.
+
+[source, shell]
+.count words
+----
+count-words < README.md
+----
+
+Check <<Pipes>> feature section to see how to make your Carbon scripts capable of handling pipes.
+
+=== Groovyserv
+
+"GroovyServ reduces startup time of the JVM for runnning Groovy significantly. It depends on your environments,
+but in most cases, it’s 10 to 20 times faster than regular Groovy"
+-- Groovyserv site
+
+Long story short, Groovyserv will speedup the execution of your scripts a lot.
+
+==== Install
+
+You can install Groovyserv using https://sdkman.io/[sdkman]
+
+[source, shell]
+----
+sdk install groovyserv
+----
+
+Anyway in the official https://kobo.github.io/groovyserv/index.html[Groovyserv site] your can find more information
+about usage and installation.
+
+==== Modify your scripts
+
+In order to make use of Groovyserv in your scripts
+you can make them executables, and then instruct the shell to use *groovyclient* instead of *groovy* to execute
+your scripts:
+
+[source, groovy]
+----
+include::{examples}/groovyserv/md5[indent=0]
+----
+
+You only have to modify your script with the shebang command:
+
+[source, shell]
+----
+#!/usr/bin/env groovyclient
+----
+
+And add the *@GrabConfig* annotation:
+
+[source, groovy]
+----
+@GrabConfig(systemClassLoader = true)
+----
+
+IMPORTANT: Apparently without *@GrabConfig* AST transformations are not applied to the script using Groovyserv
+
+Now if you execute this with groovy:
+
+[source, shell]
+----
+[mario@field groovyserv]$ time groovy md5 ../configuration/*
+a755e320f3ab8beaa52b87b3f0766d69	../configuration/groozip_cfg.groovy
+dbd74515723565019e07511a623be76d	../configuration/groozip.gsh
+5d9c2e6e42f1448b39d108a67a95f247	../configuration/random.gsh
+26ebce2abfd928848c7405b87e789bf6	../configuration/random-quotes-cfg.gsh
+45e4369743258b7484232f88a2b323fc	../configuration/random-quotes.gsh
+30b8c0f0dd7aeff1c5d22fafdc1e0f3e	../configuration/random-quotes.yaml
+2db63ca0edc0e56ec9ad254f8c91d5da	../configuration/random.yaml
+178956e5d7120bdd095eb7c6622d1a96	../configuration/sync_big.groovy
+452b756fa1feafb01ccf9b93e787147c	../configuration/sync_config.groovy
+61c72aeb968a97fc46543459ceebbd21	../configuration/sync.groovy
+
+real	0m3.018s  <1>
+user	0m8.026s
+sys	0m0.289s
+----
+
+<1> Around 3 seconds
+
+And the same execution using groovyserv:
+
+[source, shell]
+----
+[mario@field groovyserv]$ time ./md5 ../configuration/*
+a755e320f3ab8beaa52b87b3f0766d69	../configuration/groozip_cfg.groovy
+dbd74515723565019e07511a623be76d	../configuration/groozip.gsh
+5d9c2e6e42f1448b39d108a67a95f247	../configuration/random.gsh
+26ebce2abfd928848c7405b87e789bf6	../configuration/random-quotes-cfg.gsh
+45e4369743258b7484232f88a2b323fc	../configuration/random-quotes.gsh
+30b8c0f0dd7aeff1c5d22fafdc1e0f3e	../configuration/random-quotes.yaml
+2db63ca0edc0e56ec9ad254f8c91d5da	../configuration/random.yaml
+178956e5d7120bdd095eb7c6622d1a96	../configuration/sync_big.groovy
+452b756fa1feafb01ccf9b93e787147c	../configuration/sync_config.groovy
+61c72aeb968a97fc46543459ceebbd21	../configuration/sync.groovy
+
+real	0m0.110s
+user	0m0.007s
+sys	0m0.007s
+----
+
+<1> Blazing fast!

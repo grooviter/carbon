@@ -1,0 +1,18 @@
+#!/usr/bin/env groovyclient
+
+@Grab('com.github.grooviter:carbon-core:0.2.0')
+@Grab('org.slf4j:slf4j-simple:1.7.25')
+@GrabConfig(systemClassLoader = true)
+
+carbon = [
+    name: 'md5',
+    version: '0.1.0',
+    description: 'hashes files passed as parameters',
+    params: [
+      files: [type: File[], arity: "1", description: "Files to get the hash from"]
+    ]
+]
+
+files.each {
+    println hash('MD5', it) + "\t" + it
+}

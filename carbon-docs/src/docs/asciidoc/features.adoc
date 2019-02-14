@@ -150,7 +150,7 @@ echo execution as the content of a file:
 echo "Hello Groovy" > hello.txt
 ----
 
-==== hasPipeIn() & pipeIn()
+===== hasPipeIn() & pipeIn()
 
 NOTE: Inspired in
 https://blog.nevercodealone.de/groovy-shell-scripting-pipes-und-fifos-teil-2/
