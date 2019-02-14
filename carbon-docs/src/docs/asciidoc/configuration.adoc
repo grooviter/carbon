@@ -1,11 +1,11 @@
-== Configuration
+== Metadata
 
-The most important part of a Carbon script is the configuration. The
-configuration is declared as a variable called *carbon*. The
+The most important part of a Carbon script is the script's metadata. Metadata
+is declared as a variable called *carbon*. The
 information found in that variable is used to build the Carbon script.
 
 [source, groovy]
-.configuration elements
+.metadata elements
 ----
 carbon = [
    name: 'Script name',                // <1>
@@ -67,6 +67,12 @@ script will show an error and the usage output.
 ----
 include::{examples}/files/sync.groovy[indent=0]
 ----
+
+[sidebar]
+.#!/usr/bin/env groovy
+****
+Are you wondering why the previous script had `#!/usr/bin/env` at the begginning ? Check <<Executable Scripts>> section
+****
 
 In this example the *from* and *to* options are required. If we do not
 provide values for them we'll get the following output:
@@ -168,9 +174,11 @@ carbon = [
 ]
 ----
 
-=== Externalize metadata
+=== Modularization
 
-At some point your script configuration maybe be a little bit bigger
+==== Metadata
+
+At some point your script metadata may be a little bit bigger
 than you expected.
 
 [source, groovy]
@@ -179,9 +187,9 @@ than you expected.
 include::{examples}/configuration/sync_big.groovy[indent=0]
 -----
 
-There're more lines about configuration than the task we try to
+There're more lines of metadata than the task we try to
 achieve. It's a lot of noise. Wouldn't be nice to move all that
-configuration stuff somewhere else ? What about this:
+metadata stuff somewhere else ? What about this:
 
 [source, groovy]
 .script with external configuration
@@ -189,10 +197,10 @@ configuration stuff somewhere else ? What about this:
 include::{examples}/configuration/sync.groovy[indent=0]
 ----
 
-<1> Path to Carbon configuration
+<1> Path to Carbon metadata
 
 Perfect! Now we can see clearly the script is doing, and move all the
-script related configuration to another file:
+script related metadata to another file:
 
 [source, groovy]
 .sync_config.groovy
@@ -201,9 +209,9 @@ include::{examples}/configuration/sync_config.groovy[indent=0]
 ----
 
 It's important to notice that whereas when adding the carbon
-configuration within the same script requires to use the *carbon*
-variable and use a map object, when using an external configuration
-file, all configuration properties should appear outside the carbon
+metadata within the same script requires to use the *carbon*
+variable and use a map object, when using an external metadata
+file, all properties should appear outside the carbon
 variable.
 
 [source, groovy]
@@ -216,16 +224,17 @@ carbon = [
 ----
 
 [source, groovy]
-.external config
+.external
 ----
 name = ''
 description = ''
 ----
 
-=== Externalize configuration
+==== Configuration
 
 Any configuration data apart from script's metadata can be added to a
-yaml file, and then consumed from your script as a plain map.
+yaml file, and then consumed from your script as a plain map simply
+accessing the *configuration* field.
 
 In order to achieve that, the path of that yaml file should be added
 as the value of the *configuration* property in the Carbon script's

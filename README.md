@@ -4,69 +4,67 @@
 
 Carbon is a set of utilities to make it easier to develop http://www.groovy-lang.org scripts.
 
-**IMPORTANT**: Carbon is still at alpha state.
+**IMPORTANT**: Carbon is still at *ALPHA* state.
 
 ## How to use it ?
 
 ```Groovy
-#!/usr/bin/env groovy
+@Grab('com.github.grooviter:carbon-core:0.2.0')
+@Grab('org.slf4j:slf4j-simple:1.7.25')
 
 carbon = [
     name: 'greetings',
     version: '1.0.0',
-    description: '''
-    This script says @|yellow hello |@ to the name
-    passed as parameter:
-
-    greetings --name John
-    ''',
-    options: [
-        user: [type: String, required: true, description: 'Your name']
+    description: 'This script says @|yellow hello |@ to NAME',
+    params: [
+        name: [type: String, arity: "1", description: 'Your name']
     ]
 ]
 
-info "Hi there ${params.user}!"
+println "Hi there ${name}!"
 
 ```
 
-If you make the script executable and execute `./greetings.groovy -h`:
+Then you can execute
 
-```
-NAME:
-greetings (1.0.0)
-
-SYNOPSIS:
-greetings [-h] -u=PARAM
-
-DESCRIPTION:
-This script says hello  to the name
-passed as parameter:
-
-greetings --name John
-
-
-OPTIONS:
-  -h, --help         Shows help
-  -u, --user=PARAM   Your name
-
-AUTHORS:
-Still no description
+```shell
+groovy greetings.groovy -h
 ```
 
-And if you execute `./greetings.groovy --user John`:
+And you'd get:
+
+```
+
+```
+
+And if you executed
+
+```shell
+groovy greetings.groovy --user John
+```
+
+You will see in the console the following greetings:
 
 ```
 Hi there John!
 ```
 
+## Documentation
+
+You can find all the documentation, and API Groovydoc at the https://grooviter.github.io/carbon[project's site]
+
 ## Installation
 
 In order to use `Carbon` in your Groovy code you can find it in Bintray or Maven Central:
 
-    repositories {
-        jcenter() // or mavenCentral()
-    }
+```groovy
+repositories {
+    jcenter() // or mavenCentral()
+}
+```
 
 Then you can add the dependency to your project:
 
-    compile com.github.grooviter:carbon:0.1.6'
+```groovy
+compile com.github.grooviter:carbon:0.1.6'
+```

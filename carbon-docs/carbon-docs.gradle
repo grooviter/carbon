@@ -37,8 +37,6 @@ gitPublishPush {
   dependsOn 'generateDocumentation'
 }
 
-
-
 asciidoctor {
   requires 'asciidoctor-diagram'
 

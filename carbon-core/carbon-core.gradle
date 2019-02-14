@@ -28,6 +28,8 @@ dependencies {
     compile "org.codehaus.groovy:groovy-ant:$groovy_all"
     compile "org.codehaus.groovy:groovy-macro:$groovy_all"
     compile "org.codehaus.groovy:groovy-cli-picocli:$groovy_all"
+    compileOnly "org.codehaus.groovy:groovy-datetime:$groovy_all"
+
     compile "org.yaml:snakeyaml:1.18"
     compile "org.slf4j:slf4j-api:1.7.25"
     compile "org.fusesource.jansi:jansi:$jansiVersion"
@@ -47,6 +49,23 @@ jacoco {
 codenarc {
     configFile file('src/main/codenarc/config.groovy')
     toolVersion "1.2"
+}
+
+sourceSets {
+    groovydoc {
+        resources {
+            srcDir "../carbon-docs/src/docs/groovydoc"
+        }
+    }
+}
+
+groovydoc {
+    link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
+    link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
+    docTitle project.name
+
+    destinationDir = file("../carbon-docs/build/site/api")
+    classpath = sourceSets.groovydoc.output + classpath
 }
 
 publishing {

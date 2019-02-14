@@ -1,9 +1,9 @@
 == Features
 
-When writing shell scripts There're a lot of tasks that require to
+When writing shell scripts there're a lot of tasks that require to
 repeat the same code over and over again. Carbon scripts by default
-contain a set of basic features that try to help developer to deal
-with such common tasks.
+contain a set of basic features that try to help developers to deal
+with some common tasks.
 
 === Basic features
 
@@ -18,6 +18,8 @@ The basic features included by default include functions:
 - ... etc
 
 ==== LocalFileFeature
+
+===== Groovy AntBuilder
 
 There're plenty of scenarios where we could find ourselves, dealing with
 local files right ? Among other functions Carbon already has an integration with
