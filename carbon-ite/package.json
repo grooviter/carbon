@@ -23,6 +23,7 @@
         "@fortawesome/vue-fontawesome": "^0.1.5",
         "assets": "^3.0.1",
         "colors.css": "^3.0.0",
-        "vue": "^2.6.6"
+        "vue": "^2.6.6",
+        "vue-router": "^3.0.2"
     }
 }
