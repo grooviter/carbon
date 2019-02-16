@@ -20,7 +20,6 @@ div.main {
             height: 2rem;
             font-size: 1rem;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
             padding: .8rem 0rem;
             width: 100%;
 
@@ -78,11 +77,12 @@ div.main {
     }
 
     & div.content {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
-        flex-wrap: wrap;
         align-content: flex-start;
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;    
+        justify-content: flex-start;        
+        padding: 1rem;
     }
 
     & aside {
