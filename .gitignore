@@ -1,7 +1,10 @@
 build/
 out/
+node_modules/
+dist/
 
 .idea/
+.cache/
 .gradle/
 
 

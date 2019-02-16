@@ -1,0 +1,143 @@
+@import url('./assets/colors.css');
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+div.main {
+    display: flex;
+
+    & div.body {
+        width: 100%;
+
+        & nav {
+            align-items: center;
+            border-bottom: 1px solid #999;
+            display: flex;
+            height: 2rem;
+            font-size: 1rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding: .8rem 0rem;
+            width: 100%;
+
+            & div {
+                display: flex;
+            }
+
+            & div.left {
+                display: flex;
+                padding-left: 1rem;
+            }
+
+            & div.right {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-around;
+                padding-right: 1rem;
+                width: 16rem;
+
+                & a {
+                    color: #666666;
+                    width: 2rem;                    
+                    text-decoration: none;
+                }
+
+                & a.user {
+                    border-radius: 5%;
+                    border: 1px solid #9999;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding: .2rem .8rem;
+                    margin-left: 1rem;
+                    width: 12rem;
+                    
+                    & svg {
+                        display: flex;
+                    }
+
+                    & img {
+                        border-radius: 50%;
+                        width: 2rem;
+                        height: 2rem;
+                    }
+
+                    &:hover {
+                        background: #666666;
+                        color: #ffffff;
+                    }
+                }
+            }
+        }
+    }
+
+    & div.content {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        align-content: flex-start;
+    }
+
+    & aside {
+        border-right: 1px solid #cccccc;
+        height: 96vh;
+        width: 12vw;        
+
+        & h1 {
+            border-bottom: 1px solid #999;
+            display:flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 200;
+            height: 2rem;
+            margin: auto;
+            padding: .8rem .8rem;
+
+            & svg {
+                margin-right: 1rem;
+            }
+        }
+
+        & section {
+            padding: .5rem 1rem;
+
+            & h2 {
+                font-size: 1.2rem;
+                font-variant: all-small-caps;
+                margin-bottom: .6rem;
+            }
+
+            & ul {
+                list-style: none;
+
+                & li {
+                    font-size: .9rem;
+                    list-style: none;
+                    line-height: 1.2rem;
+                    margin-bottom: .4rem;
+
+                    & svg {
+                        margin-right: .8rem;
+                    }
+
+                    & a {
+                        color: var(--gray-400);
+                        text-decoration: none;
+                        text-align: left;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
