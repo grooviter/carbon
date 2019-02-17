@@ -1,0 +1,13 @@
+type Script {
+   name: String
+   description: String
+   status: String
+}
+
+type Queries {
+  runningScripts: [Script]
+}
+
+schema {
+  query: Queries
+}

@@ -1,5 +1,6 @@
 include 'carbon-core'
 include 'carbon-docs'
+include 'carbon-ite-api'
 
 rootProject.name = 'carbon'
 

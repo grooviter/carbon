@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: carbon.carbonite
+---
+testFramework: spock
+sourceLanguage: groovy
