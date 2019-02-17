@@ -2,6 +2,9 @@
   "exclude": [
     "node_modules"
   ],
+  "include": [
+    "**.ts"
+  ],
   "types": [
     "jest"
   ],
@@ -17,6 +20,9 @@
     "sourceMap": true,
     "pretty": true,
     "removeComments": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "paths": {
+      "*.ts": ["*"]
+    }
   }
 }
