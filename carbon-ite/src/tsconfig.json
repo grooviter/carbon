@@ -1,23 +1,22 @@
 {
-    "compilerOptions": {
-      "target": "es5",
-      "module": "commonjs",
-      "declaration": false,
-      "noImplicitAny": false,
-      "removeComments": false,
-      "isolatedModules": false,
-      "jsx": "react",
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "noLib": false,
-      "preserveConstEnums": true,
-      "suppressImplicitAnyIndexErrors": true,
-      "outDir": "./dist/"
-    },
-    "exclude": [
-      "client",
-      "node_modules",
-      "typings/browser",
-      "typings/browser.d.ts"
-    ]
+  "exclude": [
+    "node_modules"
+  ],
+  "types": [
+    "jest"
+  ],
+  "compilerOptions": {    
+    "outDir": "./dist/",
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "allowJs": false,
+    "sourceMap": true,
+    "pretty": true,
+    "removeComments": true,
+    "experimentalDecorators": true
+  }
 }

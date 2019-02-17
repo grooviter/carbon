@@ -54,8 +54,8 @@
     </div>
 </template>
 
-<script src="app-component" lang="ts">
-    import App from './app-component';
+<script lang="ts">
+    import App from './App.ts';
     import { library } from '@fortawesome/fontawesome-svg-core'
     import {
       faUser,
@@ -73,5 +73,5 @@
 </script>
 
 <style lang="scss">
-    @import 'app.scss';
+    @import 'App.scss';
 </style>
