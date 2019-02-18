@@ -4,9 +4,9 @@ micronaut:
 
 datasources:
     default:
-        url: 'jdbc:postgresql://localhost:5432/window_test'
-        username: 'window_test'
-        password: 'window_test'
+        url: 'jdbc:postgresql://localhost:5432/carbonite'
+        username: 'carbonite'
+        password: 'carbonite'
         driverClassName: 'org.postgresql.Driver'
 
 flyway:
