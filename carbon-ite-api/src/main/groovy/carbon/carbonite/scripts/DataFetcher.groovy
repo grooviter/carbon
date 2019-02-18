@@ -14,7 +14,7 @@ interface DataFetcher {
     /**
      * Returns the latest list of running scripts
      *
-     * @param environment
+     * @param environment GraphQL {@link DataFetchingEnvironment} instance
      * @return a list of type {@link Script}
      * @since 0.2.0
      */
