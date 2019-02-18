@@ -52,3 +52,7 @@ mainClassName = "carbon.carbonite.Application"
 tasks.withType(GroovyCompile) {
     groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')
 }
+
+jacoco {
+    toolVersion = "0.8.3"
+}
