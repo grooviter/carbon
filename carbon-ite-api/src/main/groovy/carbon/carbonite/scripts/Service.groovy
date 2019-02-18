@@ -21,18 +21,16 @@ class Service {
      * @since 0.2.0
      */
     @Inject
-    SqlRepository repository
+    JdbcRepository repository
 
     /**
-     * Returns the current list of running scripts
+     * Returns the latest list of running scripts
      *
      * @param environment
      * @return a list of type {@link Script}
      * @since 0.2.0
      */
     List<Script> runningScripts(DataFetchingEnvironment environment) {
-        Selectors.ListScripts command = Selectors.runningScripts(environment)
-
-        return repository.list(command.offset, command.max)
+        return repository.list()
     }
 }

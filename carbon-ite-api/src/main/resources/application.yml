@@ -1,3 +1,15 @@
 micronaut:
     application:
         name: api
+
+datasources:
+    default:
+        url: 'jdbc:postgresql://localhost:5432/window_test'
+        username: 'window_test'
+        password: 'window_test'
+        driverClassName: 'org.postgresql.Driver'
+
+flyway:
+    datasources:
+        default:
+            locations: classpath:migration
