@@ -3,10 +3,11 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.2"
 }
 
-apply plugin:"application"
-apply plugin:"groovy"
+apply plugin: "application"
+apply plugin: "groovy"
+apply plugin: "jacoco"
 
-version "0.1"
+version "0.1.0"
 group "carbon.carbonite"
 
 repositories {

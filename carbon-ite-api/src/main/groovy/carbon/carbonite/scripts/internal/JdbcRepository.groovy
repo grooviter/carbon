@@ -1,5 +1,7 @@
-package carbon.carbonite.scripts
+package carbon.carbonite.scripts.internal
 
+import carbon.carbonite.scripts.Repository
+import carbon.carbonite.scripts.Script
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import groovy.transform.CompileStatic

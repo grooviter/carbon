@@ -1,6 +1,6 @@
 package carbon.carbonite.graphql
 
-import carbon.carbonite.scripts.Service as ScriptService
+import carbon.carbonite.scripts.internal.DataFetcherImpl as ScriptDataFetcher
 import gql.DSL
 import graphql.schema.GraphQLSchema
 
@@ -16,15 +16,20 @@ import javax.inject.Singleton
 @Singleton
 class SchemaProvider implements Provider<GraphQLSchema> {
 
+    /**
+     * Handles queries regarding {@link Script} instances
+     *
+     * @since 0.2.0
+     */
     @Inject
-    ScriptService scriptService
+    ScriptDataFetcher scriptDataFetcher
 
     @Override
     GraphQLSchema get() {
         return DSL.mergeSchemas {
             byResource('graphql/schema.graphql') {
                 mapType('Queries') {
-                    link('runningScripts', scriptService.&runningScripts)
+                    link('runningScripts', scriptDataFetcher.&runningScripts)
                 }
             }
         }

@@ -1,5 +1,9 @@
-package carbon.carbonite.scripts
+package carbon.carbonite.scripts.internal
 
+
+import carbon.carbonite.scripts.Repository
+import carbon.carbonite.scripts.Script
+import carbon.carbonite.scripts.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import groovy.transform.CompileStatic
 
@@ -7,13 +11,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Service responsible to handle queries regarding scripts
+ * Responsible to handle queries regarding scripts
  *
  * @since 0.2.0
  */
 @Singleton
 @CompileStatic
-class Service {
+class DataFetcherImpl implements DataFetcher {
 
     /**
      * Access to database
@@ -21,15 +25,9 @@ class Service {
      * @since 0.2.0
      */
     @Inject
-    JdbcRepository repository
+    Repository repository
 
-    /**
-     * Returns the latest list of running scripts
-     *
-     * @param environment
-     * @return a list of type {@link Script}
-     * @since 0.2.0
-     */
+    @Override
     List<Script> runningScripts(DataFetchingEnvironment environment) {
         return repository.list()
     }

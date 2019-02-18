@@ -1,4 +1,4 @@
-package carbon.carbonite.scripts
+package carbon.carbonite.scripts.internal
 
 import groovy.transform.CompileStatic
 
