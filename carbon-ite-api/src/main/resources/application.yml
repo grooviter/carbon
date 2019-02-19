@@ -2,6 +2,10 @@ micronaut:
     application:
         name: api
 
+    server:
+        cors:
+            enabled: true
+
 datasources:
     default:
         url: 'jdbc:postgresql://localhost:5432/carbonite'
