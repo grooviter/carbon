@@ -17,15 +17,21 @@
             <ul>
                 <li>
                     <font-awesome-icon icon="list-ul"></font-awesome-icon>
-                    <router-link to="/list">List scripts</router-link>
+                    <router-link to="/scripts">List scripts</router-link>
                 </li>
             </ul>
         </section>
         <section class="main">
             <h2>Users</h2>
             <ul>
-                <li><font-awesome-icon icon="user"></font-awesome-icon><a href="#">List Users</a></li>
-                <li><font-awesome-icon icon="user-plus"></font-awesome-icon><a href="#">Add User</a></li>
+                <li>
+                    <font-awesome-icon icon="user"></font-awesome-icon>
+                    <router-link to="/users">List Users</router-link>
+                </li>
+                <li>
+                    <font-awesome-icon icon="user-plus"></font-awesome-icon>
+                    <router-link to="/users/add">Add User</router-link>
+                </li>
             </ul>
         </section>
     </aside>
