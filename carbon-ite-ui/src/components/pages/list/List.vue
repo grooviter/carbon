@@ -1,31 +1,50 @@
 <template>
     <ul>
         <li v-for="execution in executions"
-            v-bind:key="execution.id">
+            v-bind:key="execution.uuid">
             <list-item 
-                :title="execution.title" 
+                :title="execution.name" 
                 :status="execution.status" />
         </li>
     </ul>
 </template>
 <script lang="ts">
-import Vue from 'vue';
 import ListItem from './ListItem.vue';
+import Script from '../../../domains/Script'
+import api from '../../../services/Services'
+import { Component, Vue } from 'vue-property-decorator';
 
-export default Vue.extend({
-    name: 'list',
-    data: () => {
-        return {
-            executions: [
-                { id: 1, title: 'nasdaq-100', status: 'running' }, 
-                { id: 2, title: 'ibex-35', status: 'failure' }
-            ]
-        }
-    },
+/**
+ * Represents a list of current running scripts
+ * 
+ * @since 0.2.0
+ */
+@Component({
     components: {
         ListItem
     }
 })
+export default class List extends Vue {
+
+    /**
+     * Current script executions
+     * 
+     * @since 0.2.0
+     */
+    executions!:Array<Script>
+
+    data () {
+        return {
+            executions: []
+        }
+    }
+
+    mounted () {
+        api.scripts.list().then(data => {
+            this.executions = data;
+        })
+    }
+}
 </script>
 <style lang="postcss" scoped>
     ul {

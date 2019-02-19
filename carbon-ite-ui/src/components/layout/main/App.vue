@@ -55,21 +55,25 @@
 </template>
 
 <script lang="ts">
-    import App from './App.ts';
-    import { library } from '@fortawesome/fontawesome-svg-core'
-    import {
-      faUser,
-      faUserPlus,
-      faBell,
-      faComments,
-      faCompressArrowsAlt,
-      faCaretDown,
-      faListUl,
-      faBurn
-    } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { Component, Vue } from 'vue-property-decorator'
+import {
+    faUser,
+    faUserPlus,
+    faBell,
+    faComments,
+    faCompressArrowsAlt,
+    faCaretDown,
+    faListUl,
+    faBurn
+} from '@fortawesome/free-solid-svg-icons'
 
-    library.add(faUser, faUserPlus, faBurn, faListUl, faBell, faComments, faCompressArrowsAlt, faCaretDown)
-    export default App;
+library.add(faUser, faUserPlus, faBurn, faListUl, faBell, faComments, faCompressArrowsAlt, faCaretDown)
+
+@Component
+export default class App extends Vue {
+
+}
 </script>
 
 <style lang="scss">

@@ -16,9 +16,20 @@
     </article>                    
 </template>
 <script lang="ts">
-import ListItem from './ListItem.ts';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 
-export default ListItem
+/**
+ * Represents a script entry in the UI
+ * 
+ * @since 0.2.0
+ */
+@Component
+export default class ListItem extends Vue {
+
+    @Prop() uuid!:string
+    @Prop() title!: string
+    @Prop() status!: string
+}
 </script>
 <style lang="scss">
     @import url(./ListItem.scss);
