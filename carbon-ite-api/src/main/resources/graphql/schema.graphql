@@ -1,5 +1,5 @@
 type Script {
-   uuid: ID,
+   uuid: String,
    name: String
    description: String
    status: String
