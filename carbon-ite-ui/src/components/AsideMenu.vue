@@ -1,5 +1,5 @@
 <template>
-    <aside v-bind:class="{hidden: !visible}">
+    <aside v-bind:class="{hidden: !getVisible}">
         <h1>
             <font-awesome-icon icon="burn"></font-awesome-icon>Carbonite Lite
         </h1>
@@ -26,7 +26,7 @@
             <ul>
                 <li>
                     <font-awesome-icon icon="user"></font-awesome-icon>
-                    <router-link to="/users">List Users {{ visible }}</router-link>
+                    <router-link to="/users">List Users {{ getVisible }}</router-link>
                 </li>
                 <li>
                     <font-awesome-icon icon="user-plus"></font-awesome-icon>
@@ -37,8 +37,8 @@
     </aside>
 </template>
 <script lang="ts">
-import { mapState } from 'vuex';
-import { Component, Vue } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
@@ -54,11 +54,12 @@ library.add(faUser, faUserPlus, faBurn, faListUl);
     components: {
         FontAwesomeIcon,
     },
+    computed: {
+      ...mapGetters('navigation', ['getVisible']),
+    },
 })
 export default class AsideMenu extends Vue {
-    get visible() {
-        return this.$store.getters.visible;
-    }
+
 }
 </script>
 <style lang="postcss" scoped>

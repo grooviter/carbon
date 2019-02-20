@@ -1,7 +1,7 @@
 <template>
     <nav>
         <div class="left">
-            <a class="collapse" @click="toggle">
+            <a class="collapse" v-on="{ click: toggle}">
                 <font-awesome-icon icon="compress-arrows-alt" size="lg"/>
             </a>
         </div>
@@ -17,6 +17,7 @@
     </nav>
 </template>
 <script lang="ts">
+import { mapMutations } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -33,11 +34,12 @@ library.add(faBell, faComments, faCompressArrowsAlt, faCaretDown);
     components: {
         FontAwesomeIcon,
     },
+    methods: {
+      ...mapMutations('navigation', ['toggle']),
+    },
 })
 export default class AdminMenu extends Vue {
-    public toggle() {
-        this.$store.commit('toggle');
-    }
+
 }
 </script>
 <style lang="postcss" scoped>

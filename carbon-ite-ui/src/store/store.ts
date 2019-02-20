@@ -1,20 +1,25 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { StoreOptions } from 'vuex';
+import { RootState } from '@/store/common/types';
+import navigation from '@/store/navigation';
+import scripts from '@/store/scripts';
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
+/**
+ * Here we should aggregate the rest of the store related
+ * modules
+ *
+ * @since 0.2.0
+ */
+const store: StoreOptions<RootState> = {
     state: {
-        navigation: {
-            visible: true,
-        },
+        version: '0.2.0',
     },
-    mutations: {
-        toggle(state) {
-            state.navigation.visible = !state.navigation.visible;
-        },
+    modules: {
+        navigation,
+        scripts,
     },
-    getters: {
-        visible: (state) => state.navigation.visible,
-    },
-});
+};
+
+export default new Vuex.Store<RootState>(store);
