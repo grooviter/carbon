@@ -1,9 +1,9 @@
 package carbon.carbonite.scripts.internal
 
-
+import carbon.carbonite.graphql.Context
 import carbon.carbonite.scripts.Repository
 import carbon.carbonite.scripts.Script
-import carbon.carbonite.scripts.DataFetcher
+import carbon.carbonite.scripts.ScriptFetcher
 import graphql.schema.DataFetchingEnvironment
 import groovy.transform.CompileStatic
 
@@ -17,7 +17,7 @@ import javax.inject.Singleton
  */
 @Singleton
 @CompileStatic
-class DataFetcherImpl implements DataFetcher {
+class ScriptFetcherImpl implements ScriptFetcher {
 
     /**
      * Access to database
@@ -29,6 +29,10 @@ class DataFetcherImpl implements DataFetcher {
 
     @Override
     List<Script> runningScripts(DataFetchingEnvironment environment) {
+        Context context = environment.context as Context
+
+        println "==============$context"
+
         return repository.list()
     }
 }

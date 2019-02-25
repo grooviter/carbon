@@ -1,4 +1,4 @@
-package carbon.carbonite.graphql
+package carbon.carbonite.graphql.internal
 
 import graphql.GraphQL
 import graphql.schema.GraphQLSchema

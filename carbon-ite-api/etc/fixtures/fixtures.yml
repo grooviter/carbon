@@ -1,0 +1,5 @@
+dataSource:
+    url: jdbc:postgresql://localhost:5432/carbonite
+    user: carbonite
+    password: carbonite
+    driverClassName: org.postgresql.Driver

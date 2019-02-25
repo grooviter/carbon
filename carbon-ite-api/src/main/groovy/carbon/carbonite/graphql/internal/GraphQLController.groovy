@@ -1,8 +1,11 @@
-package carbon.carbonite.graphql
+package carbon.carbonite.graphql.internal
 
+import carbon.carbonite.graphql.ContextBuilder
+import carbon.carbonite.graphql.GraphQLRequest
 import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQL
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Consumes
@@ -21,10 +24,21 @@ import javax.inject.Inject
 class GraphQLController {
 
     /**
+     * Contains the GraphQL schema
+     *
      * @since 0.2.0
      */
     @Inject
     GraphQL graphQL
+
+    /**
+     * Builds a GraphQL context from the information contained in the
+     * request
+     *
+     * @since 0.2.0
+     */
+    @Inject
+    ContextBuilder contextBuilder
 
     /**
      * Enables a GraphQL endpoint which operates
@@ -36,11 +50,12 @@ class GraphQLController {
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    ExecutionResult graphql(@Body GraphQLRequest request) {
+    ExecutionResult graphql(@Body GraphQLRequest request, HttpRequest httpRequest) {
+        Object context = contextBuilder.build(httpRequest)
         ExecutionInput input = ExecutionInput
             .newExecutionInput()
             .query(request.query)
-            .context(null)
+            .context(context)
             .variables(request.variables)
             .build()
 

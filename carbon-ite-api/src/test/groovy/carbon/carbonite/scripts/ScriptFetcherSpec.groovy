@@ -1,16 +1,16 @@
 package carbon.carbonite.scripts
 
 import carbon.carbonite.graphql.TestUtils
-import carbon.carbonite.scripts.internal.DataFetcherImpl
+import carbon.carbonite.scripts.internal.ScriptFetcherImpl
 import graphql.schema.DataFetchingEnvironment
 import spock.lang.Specification
 
 /**
- * Tests {@link DataFetcher}
+ * Tests {@link ScriptFetcher}
  *
  * @since 0.2.0
  */
-class DataFetcherSpec extends Specification {
+class ScriptFetcherSpec extends Specification {
 
     void 'runningScripts: list running scripts'() {
         given: 'a mocked repository'
@@ -19,7 +19,7 @@ class DataFetcherSpec extends Specification {
         }
 
         and: 'using it in the fetcher implementation'
-        DataFetcher fetcher = new DataFetcherImpl(repository: repository)
+        ScriptFetcher fetcher = new ScriptFetcherImpl(repository: repository)
 
         when: 'invoking runningScripts()'
         DataFetchingEnvironment environment = TestUtils.environmentWithArgs()

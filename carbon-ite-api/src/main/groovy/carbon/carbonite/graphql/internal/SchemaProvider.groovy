@@ -1,6 +1,6 @@
-package carbon.carbonite.graphql
+package carbon.carbonite.graphql.internal
 
-import carbon.carbonite.scripts.internal.DataFetcherImpl as ScriptDataFetcher
+import carbon.carbonite.scripts.ScriptFetcher
 import gql.DSL
 import graphql.schema.GraphQLSchema
 
@@ -22,14 +22,14 @@ class SchemaProvider implements Provider<GraphQLSchema> {
      * @since 0.2.0
      */
     @Inject
-    ScriptDataFetcher scriptDataFetcher
+    ScriptFetcher scriptFetcher
 
     @Override
     GraphQLSchema get() {
         return DSL.mergeSchemas {
             byResource('graphql/schema.graphql') {
                 mapType('Queries') {
-                    link('runningScripts', scriptDataFetcher.&runningScripts)
+                    link('runningScripts', scriptFetcher.&runningScripts)
                 }
             }
         }

@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
  * @since 0.2.0
  */
 @CompileStatic
-interface DataFetcher {
+interface ScriptFetcher {
 
     /**
      * Returns the latest list of running scripts

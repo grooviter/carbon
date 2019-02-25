@@ -1,0 +1,2 @@
+INSERT INTO users (uuid, name, email) VALUES ('27e81b42-3946-11e9-b210-d663bd873d93', 'user1', 'user1@email.com');
+INSERT INTO users (uuid, name, email) VALUES ('27e81e76-3946-11e9-b210-d663bd873d93', 'user2', 'user2@email.com');
